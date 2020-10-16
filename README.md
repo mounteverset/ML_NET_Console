@@ -19,4 +19,4 @@ Wie verwendet man diese Software? Welches Programm muss man starten?
 ## Links und Verweise
 
 1. Markdown Syntax: https://docs.gitlab.com/ee/user/markdown.html
-2. Git für Windows: https://git-scm.com/download/win
+2. Git fuer Windows: https://git-scm.com/download/win
