@@ -3,9 +3,9 @@
 * Teammitglieder:
 	1. <Name1>
 	2. <Name2>
-	3. <Name3>
+	3. Paul Schult
 	4. <Name4>
-* Team: <Teamnummer>
+* Team: 5
 * Semester: Wintersemester 2020/2021
 
 ## Installationshinweise
