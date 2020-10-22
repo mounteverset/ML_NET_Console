@@ -2,7 +2,7 @@
 
 * Teammitglieder:
 	1. <Name1>
-	2. <Name2>
+	2. Lukas Evers
 	3. Paul Schult
 	4. <Name4>
 * Team: 5
