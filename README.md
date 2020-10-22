@@ -1,7 +1,7 @@
 # Programmierprojekt: <Themenname>
 
 * Teammitglieder:
-	1. <Name1>
+	1. Orock Soh Talla Anderson Lewis
 	2. Lukas Evers
 	3. Paul Schult
 	4. <Name4>
