@@ -26,6 +26,8 @@ namespace CommonInterfaces
 
     public interface IStatistics
     {
+        DataTable confusionMatrix(DataTable MLResult, DataTable realResut);
+        double CalculatecertainErrorDimensions(DataTable MLResult, DataTable realResut);
 
     }
 }
