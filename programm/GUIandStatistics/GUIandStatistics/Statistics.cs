@@ -8,7 +8,9 @@ using CommonInterfaces;
 
 namespace GUIandStatistics
 {
+
     class Statistics : IStatistics
+
     {
         // zusätzliche Statistik: Sensitivität, Spezifität, positiver Vorhersagewert , negativer Vorhersagewert,
         // positiver Vorhersagewert, Korrekt/Falschklassifikationsrate
@@ -23,38 +25,41 @@ namespace GUIandStatistics
         //confusion Matrix als Dictionary...
 
 
-         public double sensitivity(DataTable MLResult, DataTable realResult)
+         public double CalculateSensitivity(List<int> MLResult, List<int> realResult)
          {
                double sensitiv = 0.87;
                return sensitiv;
          }   
                
-         public double specificity(DataTable MLResult, DataTable realResult)
+         public double CalculateSpecificity(List<int> MLResult, List<int> realResult)
          {
                double specifi = 0.76;
               return specifi;
           }    
               
-          public double precision(DataTable MLResult, DataTable realResult)
+          public double CalculatePrecision(List<int> MLResult, List<int> realResult)
           {
                double precisio = 0.91;
             return precisio;
                }
-          public double negativepredictivevalue(DataTable MLResult, DataTable realResult)
+          public double CalculateNegativePredictiveValue(List<int> MLResult, List<int> realResult)
           {
                double predictive =0.77;
                return predictive;
                }
-         
 
 
-        public double CalculatecertainErrorDimensions(DataTable MLResult, DataTable realResult)   //Entfernung beantragt
+
+        public double CalculatePositivePredictiveValue(List<int> MLResult, List<int> realResult)
         {
-
-            throw new NotImplementedException();
+            return 0.76;
         }
 
-        public DataTable confusionMatrix(DataTable MLResult, DataTable realResut)  //2x2 Tabelle 
+
+
+
+
+        public Dictionary<string, int> CalculateConfusionMatrix(DataTable MLResult, DataTable realResut)  //2x2 Tabelle 
         {
             Dictionary<string, int> confusion_Matrix =  new Dictionary<string, int>();
 
@@ -92,5 +97,6 @@ namespace GUIandStatistics
             // Add the Column to the DataColumnCollection
             */
         }
+
     }
 }
