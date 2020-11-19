@@ -12,7 +12,7 @@ namespace CommonInterfaces
         void TrainModel(DataTable trainingData);
         List<int> TestModel(DataTable testData);
         void LoadModel(string filepath);
-        void SaveModel(string filepath);
+        void SaveModel(string filepath, string filename);
         List<int> PredictAndReturnResults(DataTable rawData);
     }
 
@@ -23,8 +23,6 @@ namespace CommonInterfaces
         //readonly when instantiated
         DataTable UserTable { get; } 
 
-        int AmountOfColumns { get; set; }
-        int AmountOfRows { get; set; }
 
         //readonly when instantiated
         DataTable ML_Result { get; }
