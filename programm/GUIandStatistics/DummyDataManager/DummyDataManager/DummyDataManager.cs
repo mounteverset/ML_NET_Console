@@ -22,10 +22,9 @@ namespace DummyDataManager
                 
                 }
       
-        public int AmountOfColumns { get; set; }  // set wird entfernt werden
-        public int AmountOfRows { get; set; }     // set wird entfernt werden
 
-        public DataTable ML_Result => throw new NotImplementedException();   // eigentlich nur List<Int>
+
+        public List<int> ML_Result => throw new NotImplementedException();   // eigentlich nur List<Int>
 
 
 

@@ -16,7 +16,7 @@ namespace DummyMLAdapter
         }
 
 
-        public void SaveModel(string filepath)
+        public void SaveModel(string filepath, string filename)
         {
             // ExceptionHandling nötig im Dummy?
         }

@@ -25,7 +25,7 @@ namespace CommonInterfaces
 
 
         //readonly when instantiated
-        DataTable ML_Result { get; }
+        List<int> ML_Result { get; }
 
         void LoadCSV(string filepath);
         void SaveCSV(string filepath, string filename);
