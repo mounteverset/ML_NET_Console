@@ -7,13 +7,13 @@ using System.Data;
 
 namespace CommonInterfaces
 {
-    public interface IMLAdapter<T>
+    public interface IMLAdapter
     {
-        void trainModel(DataTable trainingData);
-        List<int> testModel(DataTable testData);
-        void loadModel(string filepath);
-        void saveModel(string filepath);
-        List<int> predictAndReturnResults(DataTable rawData);
+        void TrainModel(DataTable trainingData);
+        List<int> TestModel(DataTable testData);
+        void LoadModel(string filepath);
+        void SaveModel(string filepath);
+        List<int> PredictAndReturnResults(DataTable rawData);
     }
 
 
@@ -29,25 +29,25 @@ namespace CommonInterfaces
         //readonly when instantiated
         DataTable ML_Result { get; }
 
-        void loadCSV(string filepath);
-        void saveCSV(string filepath, string filename);
-        int getAmountOfColumns();
-        void setColumnsType(int[] dataColumns, int resultColumn);
-        void setMLResult(List<int> mlResult);
+        void LoadCSV(string filepath);
+        void SaveCSV(string filepath, string filename);
+        int GetAmountOfColumns();
+        void SetColumnsType(int[] dataColumns, int resultColumn);
+        void SetMLResult(List<int> mlResult);
         
     }
 
     public interface IStatistics
     {
-        double calculateSensitivity(List<int> MLResult, List<int> realResult);
+        double CalculateSensitivity(List<int> MLResult, List<int> realResult);
 
-        double calculateSpecificity(List<int> MLResult, List<int> realResult);
+        double CalculateSpecificity(List<int> MLResult, List<int> realResult);
 
-        double calculatePrecision(List<int> MLResult, List<int> realResult);
+        double CalculatePrecision(List<int> MLResult, List<int> realResult);
 
-        double calculateNegativePredictiveValue(List<int> MLResult, List<int> realResult);
+        double CalculateNegativePredictiveValue(List<int> MLResult, List<int> realResult);
 
-        double calculatePositivePredictiveValue(List<int> MLResult, List<int> realResult);
+        double CalculatePositivePredictiveValue(List<int> MLResult, List<int> realResult);
 
         Dictionary<string, int> CalculateConfusionMatrix(DataTable MLResult, DataTable realResut);
 
