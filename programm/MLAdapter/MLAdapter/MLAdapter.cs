@@ -25,30 +25,31 @@ namespace MLAdapter
         #endregion
 
         #region Methods
-        public void trainModel(DataTable trainingData)
+        public void TrainModel(DataTable trainingData)
         {
             throw new NotImplementedException();
         }
-        public void testModel(DataTable testData)
-        {
-            throw new NotImplementedException();
-
-        }
-        public void loadModel(string filepath)
+        public List<int> TestModel(DataTable testData)
         {
             throw new NotImplementedException();
 
         }
-        public void saveModel(string filepath)
+        public void LoadModel(string filepath)
+        {
+            throw new NotImplementedException();
+
+        }
+        public void SaveModel(string filepath)
         {
             throw new NotImplementedException();
         }
-        public DataTable predictAndReturnResults(DataTable rawData)
+
+
+        public List<int> PredictAndReturnResults(DataTable rawData)
         {
-
-            return new DataTable();
-
+            throw new NotImplementedException();
         }
+        
         #endregion
 
         #region Constructors

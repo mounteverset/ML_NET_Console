@@ -15,14 +15,14 @@ namespace DummyGUI_MLAdapter
         {
             
             MLAdapter.MLAdadpter mLAdapter = new MLAdadpter();
-            mLAdapter.trainModel(new DataTable());
-            mLAdapter.testModel(new DataTable());
-            DataTable results = new DataTable();
-            mLAdapter.predictAndReturnResults(results);
-            var resultView = results.DefaultView;
+            mLAdapter.TrainModel(new DataTable());
+            mLAdapter.TestModel(new DataTable());
+            DataTable data = new DataTable();
+            List<int> results = mLAdapter.PredictAndReturnResults(data);
             
-            mLAdapter.saveModel("hier");
-            mLAdapter.loadModel("dort");
+            
+            mLAdapter.SaveModel("hier");
+            mLAdapter.LoadModel("dort");
 
         }
     }
