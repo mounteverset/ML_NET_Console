@@ -18,33 +18,34 @@ namespace GUIandStatistics
         // public double specificity(DataTable MLResult, DataTable realResult)
         // public double precision(DataTable MLResult, DataTable realResult)
         // public double negativepredictivevalue(DataTable MLResult, DataTable realResult)
+        // public double positivepredictivevalue(DataTable MLResult, DataTable realResult)
 
         //confusion Matrix als Dictionary...
 
-        /*
-         * public double sensitivity(DataTable MLResult, DataTable realResult)
-         * {
-         *      double sensitiv = 0.87;
-         *      return sensitiv;
-         *  }   
-         *      
-         * public double specificity(DataTable MLResult, DataTable realResult)
-         * {
-         *      double specifi = 0.76;
-         *      return specifi;
-         *  }    
-         *      
-         * public double precision(DataTable MLResult, DataTable realResult)
-         * {
-         *      double precisio = 0.91;
-         *      }
-         * public double negativepredictivevalue(DataTable MLResult, DataTable realResult)
-         * {
-         *      double predictive =0.77;
-         *      return predictive;
-         *      }
-         *      
-         */
+
+         public double sensitivity(DataTable MLResult, DataTable realResult)
+         {
+               double sensitiv = 0.87;
+               return sensitiv;
+         }   
+               
+         public double specificity(DataTable MLResult, DataTable realResult)
+         {
+               double specifi = 0.76;
+              return specifi;
+          }    
+              
+          public double precision(DataTable MLResult, DataTable realResult)
+          {
+               double precisio = 0.91;
+            return precisio;
+               }
+          public double negativepredictivevalue(DataTable MLResult, DataTable realResult)
+          {
+               double predictive =0.77;
+               return predictive;
+               }
+         
 
 
         public double CalculatecertainErrorDimensions(DataTable MLResult, DataTable realResult)   //Entfernung beantragt
