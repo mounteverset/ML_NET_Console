@@ -12,6 +12,7 @@ namespace DataManager
     {
         #region Attributes
         public DataTable UserTable { get; }
+        private DataTable _UserTable { get; set; }
         public int AmountOfColumns { get; set; }
         public int AmountOfRows { get; set; }
         public DataTable ML_Result { get; }
