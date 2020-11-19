@@ -24,7 +24,7 @@ namespace DummyDataManager
 
         public int getAmountOfColumns()
         {
-            return 4;   // schön Wären hier Coner-Cases und in Abstimmung mit den tatsächlichen Spalten der Datatable
+            return 4;   // schön Wären hier Corner-Cases und in Abstimmung mit den tatsächlichen Spalten der Datatable
         }
 
         public void loadCSV(string filepath)
