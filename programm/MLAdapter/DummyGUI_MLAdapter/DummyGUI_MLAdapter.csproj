@@ -49,5 +49,11 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MLAdapter\MLAdapter.csproj">
+      <Project>{086a264a-99a5-4caf-9655-88dc3a697548}</Project>
+      <Name>MLAdapter</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
