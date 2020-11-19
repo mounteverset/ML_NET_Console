@@ -1,1 +1,1 @@
-Legen Sie an dieser Stelle final Ihr Pflichtenheft ab.
+Das Pflichtenheft ist final als Abgabe MLStudents Pflichtenheft und tech Spezifikation.pdf abgelegt.
