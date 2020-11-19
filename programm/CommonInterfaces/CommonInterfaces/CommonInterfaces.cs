@@ -7,13 +7,13 @@ using System.Data;
 
 namespace CommonInterfaces
 {
-    public interface IMLAdapter
+    public interface IMLAdapter<T>
     {
         void trainModel(DataTable trainingData);
-        void testModel(DataTable testData);
+        List<int> testModel(DataTable testData);
         void loadModel(string filepath);
         void saveModel(string filepath);
-        DataTable predictAndReturnResults(DataTable rawData);
+        List<int> predictAndReturnResults(DataTable rawData);
     }
 
 
@@ -33,14 +33,24 @@ namespace CommonInterfaces
         void saveCSV(string filepath, string filename);
         int getAmountOfColumns();
         void setColumnsType(int[] dataColumns, int resultColumn);
-        void setMLResult(DataTable mlResult);
-        DataTable convertCSVtoDataTable();
+        void setMLResult(List<int> mlResult);
+        
     }
 
     public interface IStatistics
     {
-        DataTable confusionMatrix(DataTable MLResult, DataTable realResut);
-        double CalculatecertainErrorDimensions(DataTable MLResult, DataTable realResut);
+        double calculateSensitivity(List<int> MLResult, List<int> realResult);
+
+        double calculateSpecificity(List<int> MLResult, List<int> realResult);
+
+        double calculatePrecision(List<int> MLResult, List<int> realResult);
+
+        double calculateNegativePredictiveValue(List<int> MLResult, List<int> realResult);
+
+        double calculatePositivePredictiveValue(List<int> MLResult, List<int> realResult);
+
+        Dictionary<string, int> CalculateConfusionMatrix(DataTable MLResult, DataTable realResut);
+
 
     }
 }
