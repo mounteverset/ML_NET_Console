@@ -53,7 +53,10 @@ namespace MLAdapter
         #endregion
 
         #region Constructors
-        public MLAdadpter() { }
+        public MLAdadpter() 
+        {
+            this.MLContext = new MLContext();
+        }
 
         #endregion
     }

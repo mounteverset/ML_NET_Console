@@ -25,7 +25,7 @@ namespace DummyGUI_MLAdapter
             List<int> results = mLAdapter.PredictAndReturnResults(data);
             
             
-            mLAdapter.SaveModel("hier");
+            mLAdapter.SaveModel("hier", "name");
             mLAdapter.LoadModel("dort");
             
         }
