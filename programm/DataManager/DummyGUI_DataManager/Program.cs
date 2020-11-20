@@ -18,13 +18,12 @@ namespace DummyGUI_DataManager
             DummyMLAdapterClass dummyMLAdapter = new DummyMLAdapterClass();
             string filepath = @"../../../../Beispieldaten.iris.txt";
             string filename = "";
-            int[] dataColumns = new int[dataManager.AmountOfColumns];
+            int[] dataColumns = new int[dataManager.UserTable.Columns.Count];
             int resultColumn = 0;
             List<int> mlResult = new List<int>();
             #region MethodCalls
             dataManager.LoadCSV(filepath);
             dataManager.SaveCSV(filepath, filename);
-            dataManager.AmountOfColumns= dataManager.GetAmountOfColumns();
             dataManager.SetColumnsType(dataColumns, resultColumn);
             dataManager.SetMLResult(mlResult);
             dummyMLAdapter.LoadModel(filepath);
