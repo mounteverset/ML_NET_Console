@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DataManager;
 using System.Data;
+using DummyMLAdapter;
 
 namespace DummyGUI_DataManager
 {
@@ -14,7 +15,8 @@ namespace DummyGUI_DataManager
         {
 
             DataManagerClass dataManager = new DataManagerClass();
-            string filepath = "";
+            DummyMLAdapterClass dummyMLAdapter = new DummyMLAdapterClass();
+            string filepath = @"../../../../Beispieldaten.iris.txt";
             string filename = "";
             int[] dataColumns = new int[dataManager.AmountOfColumns];
             int resultColumn = 0;
@@ -25,7 +27,12 @@ namespace DummyGUI_DataManager
             dataManager.AmountOfColumns= dataManager.GetAmountOfColumns();
             dataManager.SetColumnsType(dataColumns, resultColumn);
             dataManager.SetMLResult(mlResult);
-            dataManager.ConvertCSVtoDataTable();
+            dummyMLAdapter.LoadModel(filepath);
+            dummyMLAdapter.TrainModel(dataManager.UserTable);
+            dummyMLAdapter.TestModel(dataManager.UserTable);
+            dummyMLAdapter.PredictAndReturnResults(dataManager.UserTable);
+           
+        
             #endregion
         }
     }
