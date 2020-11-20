@@ -54,6 +54,10 @@
       <Project>{80fa9eae-7c3d-458d-944f-b6fd19438c25}</Project>
       <Name>DataManager</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DummyMLAdapter\DummyMLAdapter.csproj">
+      <Project>{e513110c-cb71-4a67-8847-7d0ad8d5b92c}</Project>
+      <Name>DummyMLAdapter</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
