@@ -8,33 +8,33 @@ using CommonInterfaces;
 
 namespace DummyMLAdapter
 {
-    public class DummyMLAdapterClass: IMLAdapter
+    public class DummyMLAdapterClass: IMLAdapter<T>
     {
         #region Methods
-        public void trainModel(DataTable trainingData)
+        public void TrainModel(DataTable trainingData)
         {
             throw new NotImplementedException();
             // Das ML.Model wird trainiert 
         }
-        public void testModel(DataTable testData)
-        {
-            throw new NotImplementedException();
+        public List<int> TestModel(DataTable testData)
+        {           
             // Das ML.Model wird getestet
+            return new List<int>();
         }
-        public void loadModel(string filepath)
+        public void LoadModel(string filepath)
         {
             throw new NotImplementedException();
             // Das ML.Model wird heruntergeladen
         }
-        public void saveModel(string filepath)
+        public void SaveModel(string filepath)
         {
             throw new NotImplementedException();
             // Das ML.Model wird gespeichert
         }
-        public DataTable predictAndReturnResults(DataTable rawData)
+        public List<int> PredictAndReturnResults(DataTable rawData)
         {
             //output
-            return new DataTable();
+            return new List<int>();
         }
         #endregion
     }
