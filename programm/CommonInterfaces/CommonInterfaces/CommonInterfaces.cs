@@ -7,7 +7,7 @@ using System.Data;
 
 namespace CommonInterfaces
 {
-    public interface IMLAdapter
+    public interface IMLAdapter<T>
     {
         void TrainModel(DataTable trainingData);
         List<int> TestModel(DataTable testData);
@@ -39,15 +39,15 @@ namespace CommonInterfaces
 
     public interface IStatistics
     {
-        double CalculateSensitivity(List<int> MLResult, List<int> realResult);
+        double calculateSensitivity(List<int> MLResult, List<int> realResult);
 
-        double CalculateSpecificity(List<int> MLResult, List<int> realResult);
+        double calculateSpecificity(List<int> MLResult, List<int> realResult);
 
-        double CalculatePrecision(List<int> MLResult, List<int> realResult);
+        double calculatePrecision(List<int> MLResult, List<int> realResult);
 
-        double CalculateNegativePredictiveValue(List<int> MLResult, List<int> realResult);
+        double calculateNegativePredictiveValue(List<int> MLResult, List<int> realResult);
 
-        double CalculatePositivePredictiveValue(List<int> MLResult, List<int> realResult);
+        double calculatePositivePredictiveValue(List<int> MLResult, List<int> realResult);
 
         Dictionary<string, int> CalculateConfusionMatrix(DataTable MLResult, DataTable realResut);
 
