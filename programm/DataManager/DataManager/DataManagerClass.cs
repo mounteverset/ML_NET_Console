@@ -5,17 +5,26 @@ using System.Text;
 using System.Threading.Tasks;
 using CommonInterfaces;
 using System.Data;
+using System.IO;
+using System.Text.RegularExpressions;
 
 namespace DataManager
 {
     public class DataManagerClass: IDataManager
     {
         #region Attributes
-        public DataTable UserTable { get; }
+        public DataTable UserTable
+        {
+            get
+            {
+                string filepath = @"C:\Dokumente\II_third_semester\programmierprojekt\neuronale_netzwerke\programm\Beispieldaten.iris.txt";
+                return ConvertCSVtoDataTable(filepath);
+            }
+        }
         private DataTable _UserTable { get; set; }
         public int AmountOfColumns { get; set; }
         public int AmountOfRows { get; set; }
-        public DataTable ML_Result { get; }
+        public List<int> ML_Result { get; }
         private string CSV_FilePath { get; set; }
 
         #endregion
@@ -28,6 +37,7 @@ namespace DataManager
         #region Methods
         public void LoadCSV(string filepath)
         {
+           
             throw new NotImplementedException();
             // Die CSV-Datei wir heruntergeladen
         }
@@ -38,8 +48,9 @@ namespace DataManager
         }
         public int GetAmountOfColumns()
         {
+            AmountOfColumns=UserTable.Columns.Count;
             //Die Anzahl der Spalten wird ermittelt
-            return 0;
+            return AmountOfColumns;
         }
         public void SetColumnsType(int[] dataColumns, int resultColumn)
         {
@@ -51,10 +62,33 @@ namespace DataManager
             throw new NotImplementedException();
             // MLResult wird festgelegt
         }
-        public DataTable ConvertCSVtoDataTable()
+        public  DataTable ConvertCSVtoDataTable( string filepath)
         {
             // Die heruntergeladene CSV-Datei wird in  Datatable konvertiert
-            return new DataTable();
+
+            DataTable dt = new DataTable();
+            Regex CSVParser = new Regex(",(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))");
+
+            using (StreamReader sr = new StreamReader(filepath))
+            {
+                string[] headers = sr.ReadLine().Split(',');
+                foreach (string header in headers)
+                {
+                    dt.Columns.Add(header);
+                }
+                while (!sr.EndOfStream)
+                {
+                    string[] rows = CSVParser.Split(sr.ReadLine());
+                    DataRow dr = dt.NewRow();
+
+                    for (int i = 0; i < headers.Length; i++)
+                    {
+                        dr[i] = rows[i].Replace("\"", string.Empty);
+                    }
+                    dt.Rows.Add(dr);
+                }
+            }
+            return dt;
         }
         #endregion
 
