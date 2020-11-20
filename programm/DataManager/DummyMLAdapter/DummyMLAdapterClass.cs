@@ -26,7 +26,7 @@ namespace DummyMLAdapter
             throw new NotImplementedException();
             // Das ML.Model wird heruntergeladen
         }
-        public void SaveModel(string filepath)
+        public void SaveModel(string filepath, string filename)
         {
             throw new NotImplementedException();
             // Das ML.Model wird gespeichert
