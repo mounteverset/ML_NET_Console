@@ -39,7 +39,7 @@ namespace MLAdapter
             throw new NotImplementedException();
 
         }
-        public void SaveModel(string filepath)
+        public void SaveModel(string filepath, string filename)
         {
             throw new NotImplementedException();
         }
@@ -53,7 +53,10 @@ namespace MLAdapter
         #endregion
 
         #region Constructors
-        public MLAdadpter() { }
+        public MLAdadpter() 
+        {
+            this.MLContext = new MLContext();
+        }
 
         #endregion
     }

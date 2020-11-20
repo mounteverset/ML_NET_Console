@@ -10,30 +10,52 @@ namespace DummyMLAdapter
 {
     public class MLAdapter : IMLAdapter
     {
-        public void loadModel(string filepath)
+        public void LoadModel(string filepath)
         {
             // ExceptionHandling nötig im Dummy?
         }
 
-        public DataTable predictAndReturnResults(DataTable rawData)
-        {
-            throw new NotImplementedException();
-        }
 
-        public void saveModel(string filepath)
+        public void SaveModel(string filepath, string filename)
         {
             // ExceptionHandling nötig im Dummy?
         }
 
-        public void testModel(DataTable testData)   // müsste hier Datatable zurückgegeben werden mit den Ergebnissen?
+        public List<int> TestModel(DataTable testData)   // müsste hier Datatable zurückgegeben werden mit den Ergebnissen?
                                                     // da das Ergebnis angezeigt und bewerten werden muss
         {
+            List<int> testresult = new List<int>
+            {
+                2,
+                1,
+                0,
+                1,
+                1,
+                2
+            };
+            return testresult;
             // ExceptionHandling nötig im Dummy?
         }
 
-        public void trainModel(DataTable trainingData)
+        public void TrainModel(DataTable trainingData)
         {
             // ExceptionHandling nötig im Dummy?
+        }
+
+
+
+        List<int> IMLAdapter.PredictAndReturnResults(DataTable rawData)
+        {
+            List<int> result = new List<int>
+            {
+                0,
+                2,
+                1,
+                2,
+                2,
+                0
+            };
+            return result;
         }
     }
 }
