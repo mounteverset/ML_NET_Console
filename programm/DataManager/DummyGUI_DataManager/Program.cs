@@ -18,14 +18,14 @@ namespace DummyGUI_DataManager
             string filename = "";
             int[] dataColumns = new int[dataManager.AmountOfColumns];
             int resultColumn = 0;
-            DataTable MLResult = new DataTable();
+            List<int> mlResult = new List<int>();
             #region MethodCalls
-            dataManager.loadCSV(filepath);
-            dataManager.saveCSV(filepath, filename);
-            dataManager.AmountOfColumns= dataManager.getAmountOfColumns();
-            dataManager.setColumnsType(dataColumns, resultColumn);
-            dataManager.setMLResult(MLResult);
-            dataManager.convertCSVtoDataTable();
+            dataManager.LoadCSV(filepath);
+            dataManager.SaveCSV(filepath, filename);
+            dataManager.AmountOfColumns= dataManager.GetAmountOfColumns();
+            dataManager.SetColumnsType(dataColumns, resultColumn);
+            dataManager.SetMLResult(mlResult);
+            dataManager.ConvertCSVtoDataTable();
             #endregion
         }
     }
