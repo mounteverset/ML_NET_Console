@@ -17,13 +17,11 @@ namespace DataManager
         {
             get
             {
-                string filepath = @"C:\Dokumente\II_third_semester\programmierprojekt\neuronale_netzwerke\programm\Beispieldaten.iris.txt";
+                string filepath = @"C:\..\..\..\Beispieldaten.iris.txt";
                 return ConvertCSVtoDataTable(filepath);
             }
         }
         private DataTable _UserTable { get; set; }
-        public int AmountOfColumns { get; set; }
-        public int AmountOfRows { get; set; }
         public List<int> ML_Result { get; }
         private string CSV_FilePath { get; set; }
 
@@ -48,7 +46,7 @@ namespace DataManager
         }
         public int GetAmountOfColumns()
         {
-            AmountOfColumns=UserTable.Columns.Count;
+           int  AmountOfColumns=UserTable.Columns.Count;
             //Die Anzahl der Spalten wird ermittelt
             return AmountOfColumns;
         }
