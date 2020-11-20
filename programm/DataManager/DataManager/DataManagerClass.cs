@@ -26,32 +26,32 @@ namespace DataManager
         #endregion
 
         #region Methods
-        public void loadCSV(string filepath)
+        public void LoadCSV(string filepath)
         {
             throw new NotImplementedException();
             // Die CSV-Datei wir heruntergeladen
         }
-        public void saveCSV(string filepath, string filename)
+        public void SaveCSV(string filepath, string filename)
         {
             throw new NotImplementedException();
             // Die CSV-Datei wir gespeichert
         }
-        public int getAmountOfColumns()
+        public int GetAmountOfColumns()
         {
             //Die Anzahl der Spalten wird ermittelt
             return 0;
         }
-        public void setColumnsType(int[] dataColumns, int resultColumn)
+        public void SetColumnsType(int[] dataColumns, int resultColumn)
         {
             throw new NotImplementedException();
             // Spaltentyp wird festgelegt
         }
-        public void setMLResult(DataTable mlResult)
+        public void SetMLResult(List<int> mlResult)
         {
             throw new NotImplementedException();
             // MLResult wird festgelegt
         }
-        public DataTable convertCSVtoDataTable()
+        public DataTable ConvertCSVtoDataTable()
         {
             // Die heruntergeladene CSV-Datei wird in  Datatable konvertiert
             return new DataTable();
