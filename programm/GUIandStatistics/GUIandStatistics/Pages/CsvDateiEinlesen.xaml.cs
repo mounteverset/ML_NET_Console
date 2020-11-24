@@ -13,21 +13,16 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace GUIandStatistics
+namespace GUIandStatistics.Pages
 {
     /// <summary>
-    /// Interaktionslogik für MainWindow.xaml
+    /// Interaktionslogik für CsvDateiEinlesen.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class CsvDateiEinlesen : Page
     {
-        public MainWindow()
+        public CsvDateiEinlesen()
         {
             InitializeComponent();
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-
         }
     }
 }
