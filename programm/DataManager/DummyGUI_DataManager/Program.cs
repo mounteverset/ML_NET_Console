@@ -16,7 +16,7 @@ namespace DummyGUI_DataManager
 
             DataManagerClass dataManager = new DataManagerClass();
             DummyMLAdapterClass dummyMLAdapter = new DummyMLAdapterClass();
-            string filepath = @"../../../../Beispieldaten.iris.txt";
+            string filepath = @"C:\Dokumente\taxi-fare-test.csv";
             string filename = "";
             int[] dataColumns = new int[dataManager.UserTable.Columns.Count];
             int resultColumn = 0;

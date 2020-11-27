@@ -34,15 +34,33 @@ namespace DataManager
 
         #region Methods
         public void LoadCSV(string filepath)
-        {
-           
-            throw new NotImplementedException();
-            // Die CSV-Datei wir heruntergeladen
+        { // Die CSV-Datei wird heruntergeladen
+            var reader = new StreamReader(File.OpenRead(filepath));
+            List<string> listA = new List<string>();
+            List<string> listB = new List<string>();
+            while (!reader.EndOfStream)
+            {
+                var line = reader.ReadLine();
+                var values = line.Split(';');
+
+                listA.Add(values[0]);
+                listB.Add(values[1]);
+                foreach (var coloumn1 in listA)
+                {
+                    Console.WriteLine(coloumn1);
+                }
+                foreach (var coloumn2 in listA)
+                {
+                    Console.WriteLine(coloumn2);
+                }
+            }         
         }
         public void SaveCSV(string filepath, string filename)
         {
+            //Die CSV-Datei muss mit einer zusätzlichen Spalte gespeichert werden. Diese Spalte Entspricht
+            // Die Ergebnisse des Machine learnings (MLResult)
             throw new NotImplementedException();
-            // Die CSV-Datei wir gespeichert
+            // Die CSV-Datei wird gespeichert
         }
         public int GetAmountOfColumns()
         {
@@ -52,8 +70,8 @@ namespace DataManager
         }
         public void SetColumnsType(int[] dataColumns, int resultColumn)
         {
-            throw new NotImplementedException();
-            // Spaltentyp wird festgelegt
+            // Der Spaltentyp wird festgelegt(Katogorische Sachen): Spalte1: string, Spalte2: double, etc...
+            throw new NotImplementedException();         
         }
         public void SetMLResult(List<int> mlResult)
         {

@@ -8,7 +8,7 @@ using CommonInterfaces;
 
 namespace DummyMLAdapter
 {
-    public class DummyMLAdapterClass: IMLAdapter<T>
+    public class DummyMLAdapterClass: IMLAdapter
     {
         #region Methods
         public void TrainModel(DataTable trainingData)
