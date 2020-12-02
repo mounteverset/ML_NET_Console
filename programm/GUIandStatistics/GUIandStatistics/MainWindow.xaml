@@ -5,8 +5,26 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GUIandStatistics"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Datenanalyse mit neuronalen Netzen" Height="450" Width="800">
     <Grid>
-        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="5*" />
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="5*" />
+            <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="2*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="2*" />
+            <RowDefinition Height="1*" />
+
+        </Grid.RowDefinitions>
+            
+        <Button x:Name ="trainAndTestButton" Content="Modell trainieren und testen" Grid.Column="1" Grid.Row="2" Height="19" Width="160" Background="BlanchedAlmond" />
+        <Button x:Name ="useModel" Content="Modell verwenden" Grid.Column="3" Grid.Row="2" Height="19" Width="160" Background="BlanchedAlmond" />
     </Grid>
 </Window>

@@ -12,7 +12,8 @@ namespace DummyDataManager
 {
     public class DummyDataManager : IDataManager
     {
-        public DataTable UserTable {
+        public DataTable UserTable 
+        {
             get
             {
                 string filepath = @"C:\..\..\..\..\Beispieldaten.iris.txt";
@@ -20,7 +21,7 @@ namespace DummyDataManager
             }
                 
                 
-                }
+        }
       
 
 
