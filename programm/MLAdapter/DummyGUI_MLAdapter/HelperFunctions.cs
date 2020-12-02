@@ -49,5 +49,16 @@ namespace DummyGUI_MLAdapter
             }
             return dt;
         }
+
+        public static void AssignColumnNamesAndTypes(ref DataTable dt)
+        {
+            string[] names = new string[] { "Sepal length", "Sepal width", "Petal length", "Petal width", "Label" };
+
+            for (int i = 0; i < dt.Columns.Count; i++)
+            {
+                dt.Columns[i].ColumnName = names[i];;
+            }
+            
+        }
     }
 }
