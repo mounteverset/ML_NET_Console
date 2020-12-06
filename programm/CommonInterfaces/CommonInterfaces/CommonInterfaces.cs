@@ -17,14 +17,14 @@ namespace CommonInterfaces
         /// 
         /// </summary>
         /// <param name="trainingData"></param>
-        void TrainModel(DataTable trainingData);
-
+        void TrainModel(DataTable trainingData, int[] inputColumns, int resultColumn);
+        
         /// <summary>
         /// 
         /// </summary>
         /// <param name="testData"></param>
         /// <returns></returns>
-        List<int> TestModel(DataTable testData);
+        List<int> TestModel(DataTable testData, int[] inputColumns, int resultColumn);
         void LoadModel(string filepath);
 
 
@@ -86,7 +86,13 @@ namespace CommonInterfaces
         /// </summary>
         /// <param name="dataColumns"></param>
         /// <param name="resultColumn"></param>
-        void SetColumnsType(int[] dataColumns, int resultColumn);
+        void SetColumnsDataType(Dictionary<int,String> dataType);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dataColumns"></param>
+        /// <param name="resultColumn"></param>
+        void SetColumnsIOType(int[] dataColumns, int resultColumn);
 
         /// <summary>
         /// 
