@@ -10,7 +10,7 @@ using Microsoft.ML;
 
 namespace MLAdapter
 {
-    public class MLAdadpter : IMLAdapter
+    public class MLAdapter : IMLAdapter
     {
         #region Attributes
         private MLContext MLContext { get; set; }
@@ -59,20 +59,20 @@ namespace MLAdapter
         #endregion
 
         #region Private Methods
-        private void CreateIDataviewFromDatatble(DataTable dataTable)
+        private void CreateIDataViewFromDataTable(DataTable dataTable)
         {
             // magic happens here
 
-            var ts = dataTable.AsEnumerable().Select(row => new ObjectData()); //ObjectData als generische Klasse für die Inputs zum ML-Learning
-            IDataView dataView = this.MLContext.Data.LoadFromEnumerable(ts);
+            //var ts = dataTable.AsEnumerable().Select(row => new ObjectData()); //ObjectData als generische Klasse für die Inputs zum ML-Learning
+            //IDataView dataView = this.MLContext.Data.LoadFromEnumerable(ts);
 
-            this.TrainingData = dataView;
+            //this.TrainingData = dataView;
             
             
         }
         #endregion
         #region Constructors
-        public MLAdadpter() 
+        public MLAdapter() 
         {
             this.MLContext = new MLContext();
         }
