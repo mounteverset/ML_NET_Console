@@ -42,21 +42,9 @@ namespace DataManager
 
         #region Methods
         public void LoadCSV(string filepath)
-        { // Die CSV-Datei wird heruntergeladen
-            //var reader = new StreamReader(File.OpenRead(filepath));
-            //List<string>  InhaltCSVDatei = new List<string>();
-            //while (!reader.EndOfStream)
-            //{
-            //    string line = reader.ReadLine();
-            //    string[] values = line.Split(',');
-
-            //    InhaltCSVDatei.Add(values[0]);        //:::::  
-            //}
-            //foreach (string coloumn1 in InhaltCSVDatei)
-            //{
-            //    Console.WriteLine(coloumn1);
-            //}
-        }
+        {
+           
+        }//Gibt kein Datatable zurück... Why?
 
         public DataTable LoadCSVTest(string filepath)
         {//TODO: Alle LinienCode verstehen
@@ -84,32 +72,52 @@ namespace DataManager
                     dt.Rows.Add(dr);
                 }
             }
-
             return dt;
         }
-        public void SaveCSV(string filepath, string filename)
-        {        
-            
+        /// <summary>
+        /// Die CSV-Datei muss mit einer zusätzlichen Spalte gespeichert werden. Diese Spalte Entspricht
+        ///Die Ergebnisse des Machine learnings(MLResult)
+        /// </summary>
+        /// <param name="filepath"></param>
+        /// <param name="filename"></param>
+        public void SaveCSV(string filepath, string filename)//...fertig...JJJJJ
+        {
+            DataTable dt = new DataTable();
+            dt = UserTable;
+            dt.Columns.Add("ML_Result");
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+               DataRow dr= dt.Rows[i];
+                dr[7] = ML_Result[i];//JJJ
+            }
 
+            // Die Datatable wird in eine CSV Datei gespeichert
+            using (StreamWriter sw = new StreamWriter(filepath, false, System.Text.Encoding.Default))//JJJJ
+            {
+                int numberOfColumns = dt.Columns.Count;
+                //Die Kolonnen werden in der CSV-Datei gespeichert
+                for (int i = 0; i < numberOfColumns; i++)
+                {
+                    sw.Write(dt.Columns[i]);
+                    if (i < numberOfColumns - 1)
+                        sw.Write(',');
+                }
+                //Die Linien werden gespeichert
+                sw.Write(sw.NewLine);
 
+                foreach (DataRow dr in dt.Rows)
+                {
+                    for (int i = 0; i < numberOfColumns; i++)
+                    {
+                        sw.Write(dr[i].ToString());
 
+                        if (i < numberOfColumns - 1)
+                            sw.Write(',');
+                    }
+                    sw.Write(sw.NewLine);
+                }
+            }
 
-            //string newColumnHeader = "ML_Result";
-            //int lineNumber = 0;
-            //using (StreamWriter sw = File.CreateText(filepath))
-            //    foreach (var line in File.ReadAllLines(@"C:\Users\casa2\OneDrive\Dokumente\II_third_semester\programmierprojekt\machinelearning-samples-master\machinelearning-samples-master\datasets\taxi-fare-test2.CSV"))
-            //    {
-            //        sw.WriteLine(
-            //            (lineNumber++ == 0 ?
-            //                newColumnHeader :
-            //               ML_Result[lineNumber].ToString()) +
-            //            "," + line);
-            //    }
-
-            //Die CSV-Datei muss mit einer zusätzlichen Spalte gespeichert werden. Diese Spalte Entspricht
-            // Die Ergebnisse des Machine learnings (MLResult)
-
-            // Die CSV-Datei wird gespeichert
         }
         public int GetAmountOfColumns()//...fertig...
         {
@@ -117,68 +125,103 @@ namespace DataManager
             //Die Anzahl der Spalten wird ermittelt
             return AmountOfColumns;
         }
-        public void SetColumnsType(int[] dataColumns, int resultColumn)//...fertig...
-        {//Frage: Wozu die Übergabeparameter?
-            // Der Spaltentyp wird festgelegt(Katogorische Sachen): Spalte1: string, Spalte2: double, etc... 
+        /// <summary>
+        /// Der Spaltentypen werden festgelegt
+        /// </summary>
+        /// <param name="dataType"></param>
+        public void SetColumnsDataType(Dictionary<int, String> dataType)//...fertig...
+        {
             DataRow dr = UserTable.Rows[0];
-          
+
             for (int SpalteNummer = 0; SpalteNummer < UserTable.Columns.Count; SpalteNummer++)
             {                          
-                string s = dr[SpalteNummer].ToString();
+                string s = dr[SpalteNummer].ToString(); 
                 if (int.TryParse(s, out int s1))
                 {
-                    Console.WriteLine($"Spalte {SpalteNummer}: {dr[SpalteNummer]}:   {s1.GetType()}");
+                    dataType.Add(SpalteNummer, s1.GetType().ToString());
                 }
                 else if (double.TryParse(s, out double s2))
                 {
-                    Console.WriteLine($"Spalte {SpalteNummer}: {dr[SpalteNummer]}:   {s2.GetType()}");
+                    dataType.Add(SpalteNummer, s2.GetType().ToString());
                 }
                 else if (float.TryParse(s, out float s3))
                 {
-                    Console.WriteLine($"Spalte {SpalteNummer}: {dr[SpalteNummer]}:   {s3.GetType()}");
+                    dataType.Add(SpalteNummer, s3.GetType().ToString());
                 }
                 else if (bool.TryParse(s, out bool s4))
                 {
-                    Console.WriteLine($"Spalte {SpalteNummer}: {dr[SpalteNummer]}:   {s4.GetType()}");
+                    dataType.Add(SpalteNummer, s4.GetType().ToString());
                 }
                 else
                 {
-                    Console.WriteLine($"Spalte {SpalteNummer}: {dr[SpalteNummer]}:   {s.GetType()}");
+                    dataType.Add(SpalteNummer, s.GetType().ToString());
                 }
 
             }       
+        }
+        public void SetColumnsIOType(int[] dataColumns, int resultColumn)
+        {
+            dataColumns = new int[UserTable.Columns.Count - 1];
+            int j = 0;
+            for (int i = 0; i < UserTable.Columns.Count; i++)
+            {
+               string a= UserTable.Columns[i].ColumnName;
+                if (a== "ML_Result")
+                {
+                    resultColumn = i + 1;
+                }
+                else
+                {
+                    if (j<dataColumns.Length)
+                    {
+                        dataColumns[j] = i + 1;
+                        j++;
+                    }
+                    
+                }
+            }
         }
         public void SetMLResult(List<int> mlResult)
         {
             throw new NotImplementedException();
             // MLResult wird festgelegt
         }
-        //public  DataTable ConvertCSVtoDataTable( string filepath)
+
+
+
+
+
+
+
+
+
+
+        //public   DataTable convertcsvtodatatable( string filepath)
         //{
-        //    // Die heruntergeladene CSV-Datei wird in  Datatable konvertiert
+        //    //    // die heruntergeladene csv-datei wird in  datatable konvertiert
 
         //    DataTable dt = new DataTable();
-        //    Regex CSVParser = new Regex(",(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))");
+        //   Regex csvparser = new Regex(",(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))");
 
-        //    using (StreamReader sr = new StreamReader(filepath))
+        //   using (StreamReader sr = new StreamReader(filepath))
         //    {
-        //        string[] headers = sr.ReadLine().Split(',');
-        //        foreach (string header in headers)
-        //        {
+        //       string[] headers = sr.ReadLine().Split(',');
+        //       foreach (string header in headers)
+        //      {
         //            dt.Columns.Add(header);
-        //        }
-        //        while (!sr.EndOfStream)
-        //        {
-        //            string[] rows = CSVParser.Split(sr.ReadLine());
+        //       }
+        //       while (!sr.EndOfStream)
+        //       {
+        //            string[] rows = csvparser.Split(sr.ReadLine());
         //            DataRow dr = dt.NewRow();
 
-        //            for (int i = 0; i < headers.Length; i++)
-        //            {
+        //           for (int i = 0; i < headers.Length; i++)
+        //           {
         //                dr[i] = rows[i].Replace("\"", string.Empty);
-        //            }
-        //            dt.Rows.Add(dr);
-        //        }
-        //    }
+        //           }
+        //           dt.Rows.Add(dr);
+        //       }
+        //   }
 
         //    return dt;
            

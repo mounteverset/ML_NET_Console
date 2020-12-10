@@ -11,12 +11,12 @@ namespace DummyMLAdapter
     public class DummyMLAdapterClass: IMLAdapter
     {
         #region Methods
-        public void TrainModel(DataTable trainingData)
+        public void TrainModel(DataTable trainingData, int[] inputColumns, int resultColumn)
         {
             throw new NotImplementedException();
             // Das ML.Model wird trainiert 
         }
-        public List<int> TestModel(DataTable testData)
+        public List<int> TestModel(DataTable testData, int[] inputColumns, int resultColumn)
         {           
             // Das ML.Model wird getestet
             return new List<int>();

@@ -17,21 +17,18 @@ namespace DummyGUI_DataManager
             DataManagerClass dataManager = new DataManagerClass();
             DummyMLAdapterClass dummyMLAdapter = new DummyMLAdapterClass();
             string filepath = @"C:\Users\casa2\OneDrive\Dokumente\II_third_semester\programmierprojekt\machinelearning-samples-master\machinelearning-samples-master\datasets\taxi-fare-test1.CSV";
+            string filepath2 = @"C:\Users\casa2\OneDrive\Dokumente\II_third_semester\programmierprojekt\machinelearning-samples-master\machinelearning-samples-master\datasets\FinalCSV.CSV";
             string filename = "";
             int[] dataColumns = new int[dataManager.UserTable.Columns.Count];
             int resultColumn = 0;
-            dataManager.SetColumnsType(dataColumns, resultColumn);
             List<int> mlResult = new List<int>();
+            Dictionary<int, string> dataType = new Dictionary<int, string>();
             #region MethodCalls
-            //dataManager.LoadCSV(filepath);
-            dataManager.SaveCSV(filepath, filename);
-            dataManager.SetColumnsType(dataColumns, resultColumn);
-            dataManager.SetMLResult(mlResult);
-            //dummyMLAdapter.LoadModel(filepath);
-            //dummyMLAdapter.TrainModel(dataManager.UserTable);
-            //dummyMLAdapter.TestModel(dataManager.UserTable);
-            //dummyMLAdapter.PredictAndReturnResults(dataManager.UserTable);
-     
+            dataManager.LoadCSVTest(filepath);
+            dataManager.SaveCSV(filepath2, filename);
+            dataManager.SetColumnsDataType(dataType);
+            dataManager.SetColumnsIOType( dataColumns,  resultColumn);
+            dataManager.SetMLResult(mlResult);         
             #endregion
         }
     }
