@@ -88,10 +88,17 @@ namespace DataManager
             for (int i = 0; i < dt.Rows.Count; i++)
             {
                DataRow dr= dt.Rows[i];
-                dr[7] = ML_Result[i];//JJJ
+                dr[dt.Columns.Count-1] = ML_Result[i];//JJJ
             }
+            ConvertDatatableToCSV(filepath, dt);
 
-            // Die Datatable wird in eine CSV Datei gespeichert
+        }
+        /// <summary>
+        /// Die Datatable wird in eine CSV Datei gespeichert
+        /// </summary>
+        /// <param name="filepath"></param>
+        public void ConvertDatatableToCSV (string filepath, DataTable dt)
+        {
             using (StreamWriter sw = new StreamWriter(filepath, false, System.Text.Encoding.Default))//JJJJ
             {
                 int numberOfColumns = dt.Columns.Count;
@@ -117,7 +124,6 @@ namespace DataManager
                     sw.Write(sw.NewLine);
                 }
             }
-
         }
         public int GetAmountOfColumns()//...fertig...
         {
