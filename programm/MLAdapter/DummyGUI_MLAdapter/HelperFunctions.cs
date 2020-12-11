@@ -4,8 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data;
+using System.Diagnostics.Tracing;
+using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
+using MLAdapter;
+using Microsoft.ML;
+
 
 namespace DummyGUI_MLAdapter
 {
@@ -23,7 +28,7 @@ namespace DummyGUI_MLAdapter
             }
         }
 
-        public static DataTable ConvertCSVToDataTable(string filepath)
+        public static DataTable ConvertCsvToDataTable(string filepath)
         {
             DataTable dt = new DataTable();
             Regex CSVParser = new Regex(",(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))");
@@ -42,12 +47,87 @@ namespace DummyGUI_MLAdapter
 
                     for (int i = 0; i < headers.Length; i++)
                     {
-                        dr[i] = rows[i].Replace("\"", string.Empty);
+                        dr[i] = float.Parse(rows[i].Replace("\"", string.Empty), CultureInfo.InvariantCulture);
                     }
                     dt.Rows.Add(dr);
                 }
             }
             return dt;
         }
+
+        public static void AssignColumnNamesAndTypes(ref DataTable dt)
+        {
+            string[] names = new string[] { "Sepal length", "Sepal width", "Petal length", "Petal width", "Label" };
+
+            for (int i = 0; i < dt.Columns.Count; i++)
+            {
+                dt.Columns[i].ColumnName = names[i];;
+            }
+
+            //dt.Columns[0].DataType =  
+            
+        }
+
+        public static List<List<float>> ConvertToDataList (DataTable dt)
+        {
+            List<List<float>> dataList = new List<List<float>>();
+            DataRowCollection dataRows = dt.Rows;
+
+            //outer loop for traversing every row and adding it to DataList at the end
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                List<float> row = new List<float>();
+                //inner loop to create a List of floats from the current DataRow and add it to the
+                for (int j = 0; j < dataRows[i].ItemArray.Length; j++)
+                {
+                    row.Add(Convert.ToSingle(dataRows[i][j]));
+                }
+                dataList.Add(row);
+            }
+
+
+            return dataList;
+        }
+
+        public static void PrintDataListToConsole(List<List<float>> dataList)
+        {
+            for (int i = 0; i < dataList.Count; i++)
+            {
+                for (int j = 0; j < dataList[i].Count; j++)
+                {
+                    Console.Write(dataList[i][j] + " ");
+                }
+                Console.WriteLine("");
+            }
+        }
+        /// <summary>
+        /// For every row in the DataTable object a new DataObject gets created and added to the list which is returned after processing each line
+        /// </summary>
+        /// <param name="dt">DataTable object which stores all the values</param>
+        /// <param name="inputColumns">Zero-based number of all the columns which are inputs for the machine learning model</param>
+        /// <param name="resultColumn">Zero-based column number of the result column</param>
+        /// <returns></returns>
+        public static List<ObjectData> CreateObjectData(DataTable dt, int[] inputColumns, int resultColumn)
+        {
+            List<ObjectData> objectDataList = new List<ObjectData>();
+
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                float[] floatFeatures = new float[inputColumns.Length];
+                for (int j = 0; j < inputColumns.Length; j++)
+                {
+                    floatFeatures[j] = Convert.ToSingle(dt.Rows[i][inputColumns[j]]);
+                }
+
+                int result = Convert.ToInt32(dt.Rows[i][resultColumn]);
+                objectDataList.Add(new ObjectData(floatFeatures, result));
+            }
+
+            return objectDataList;
+
+        }
+
+        //public static SchemaDefinition 
+        
     }
 }
