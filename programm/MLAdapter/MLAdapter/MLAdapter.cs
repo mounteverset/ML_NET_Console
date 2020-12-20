@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CommonInterfaces;
 using System.Data;
 using Microsoft.ML;
+using Microsoft.ML.Data;
 
 
 namespace MLAdapter
@@ -20,21 +22,49 @@ namespace MLAdapter
         private IDataView TestData { get; set; }
         private IDataView UserData { get; set; }
         private PredictionEngine<object,object> PredictionEngine { get; set; }
+        private SchemaDefinition _schemaDefinition = SchemaDefinition.Create(typeof(ObjectData));
+        
+
 
 
         #endregion
 
         #region Public Methods
-        public void TrainModel(DataTable trainingData)
+        public void TrainModel(DataTable trainingData, int[] inputColumns, int resultColumn)
         {
-            // Die übergebenen Daten in ein IDataView überführen
+            List<ObjectData> data = CreateObjectDataList(trainingData, inputColumns, resultColumn);
+            DefineSchemaDefinition(inputColumns);
+
+            IDataView dataView = this.MLContext.Data.LoadFromEnumerable(data, this._schemaDefinition);
+            var trainer = this.MLContext.MulticlassClassification.Trainers.LbfgsMaximumEntropy(
+                                                                            labelColumnName: "Target",
+                                                                            featureColumnName: "FloatFeatures");
+            //this.MLContext.Transforms.Categorical.
+            //this.MLContext.
+            var results = this.MLContext.MulticlassClassification.CrossValidate(dataView, trainer, 5, "Target");
+
+            var matrix = results[0].Metrics.TopKAccuracy;
+            IEnumerable<ITransformer> models =
+                results
+                    .OrderByDescending(fold => fold.Metrics.TopKAccuracy)
+                    .Select(fold => fold.Model);
+                    
+
+            IEnumerable<double> topKResults = results.Select(fold => fold.Metrics.TopKAccuracy);
+            Console.WriteLine(String.Join(", ", topKResults));
+            var topModel = models.ToArray()[0];
+            Console.WriteLine(models.ToArray()[0]);
 
 
-            throw new NotImplementedException();
+
+
+
+
+
         }
-        public List<int> TestModel(DataTable testData)
+        public List<int> TestModel(DataTable testData, int[] inputColumns, int resultColumn)
         {
-            // Die übergebenen Daten in ein IDataView überführen
+            
 
 
             throw new NotImplementedException();
@@ -59,6 +89,26 @@ namespace MLAdapter
         #endregion
 
         #region Private Methods
+
+        public static List<ObjectData> CreateObjectDataList(DataTable dt, int[] inputColumns, int resultColumn)
+        {
+            List<ObjectData> objectDataList = new List<ObjectData>();
+
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                float[] floatFeatures = new float[inputColumns.Length];
+                for (int j = 0; j < inputColumns.Length; j++)
+                {
+                    floatFeatures[j] = Convert.ToSingle(dt.Rows[i][inputColumns[j]]);
+                }
+
+                int result = Convert.ToInt32(dt.Rows[i][resultColumn]);
+                objectDataList.Add(new ObjectData(floatFeatures, result));
+            }
+
+            return objectDataList;
+        }
+
         private void CreateIDataViewFromDataTable(DataTable dataTable)
         {
             // magic happens here
@@ -70,11 +120,24 @@ namespace MLAdapter
             
             
         }
+
+        private void DefineSchemaDefinition(int[] inputColumns)
+        {
+            //var uint_type = Type.GetType("UInt32");
+            this._schemaDefinition["FloatFeatures"].ColumnType = new VectorDataViewType(NumberDataViewType.Single, inputColumns.Length);
+            this._schemaDefinition["Target"].ColumnType = new KeyDataViewType(typeof(uint), 4);
+        }
         #endregion
+
         #region Constructors
         public MLAdapter() 
         {
             this.MLContext = new MLContext();
+        }
+
+        public MLAdapter(int seed)
+        {
+            this.MLContext = new MLContext(seed);
         }
 
         #endregion

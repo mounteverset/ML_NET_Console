@@ -17,13 +17,13 @@ namespace MLAdapter
         //public int[] CategoricalFeatures { get; set; }
 
         // der Wert der Zielspalte, evtl ändern in int
-        public int Target { get; set; }
+        public uint Target { get; set; }
 
         public ObjectData(float[] floatFeatures, int target)
         {
             this.FloatFeatures = floatFeatures;
             //this.CategoricalFeatures = categoricalFeatures;
-            this.Target = target;
+            this.Target = Convert.ToUInt32(target);
         }
     }
 }

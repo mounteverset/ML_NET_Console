@@ -24,18 +24,10 @@ namespace DummyGUI_MLAdapter
             var container_2 = dt.Columns[0].DataType;
             var value = dt.Rows[0][2].GetType();
             Console.WriteLine("********************************************************************************");
-            List<List<float>> list = HelperFunctions.ConvertToDataList(dt);
-            HelperFunctions.PrintDataListToConsole(list);
-            var val = list[0][2].GetType();
             int[] inputColumns = new int[] {0, 1, 2, 3};
-            List<ObjectData> objectDataList = HelperFunctions.CreateObjectData(dt, inputColumns , 4);
-
-            SchemaDefinition schema = SchemaDefinition.Create(typeof(ObjectData));
-            schema["FloatFeatures"].ColumnType = new VectorDataViewType(NumberDataViewType.Single, inputColumns.Length );
-
-
 
             MLAdapter.MLAdapter mLAdapter = new MLAdapter.MLAdapter();
+            mLAdapter.TrainModel(dt, inputColumns, 4);
 
             
             /*mLAdapter.TrainModel(dt);
