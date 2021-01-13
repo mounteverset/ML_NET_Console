@@ -25,5 +25,10 @@ namespace MLAdapter
             //this.CategoricalFeatures = categoricalFeatures;
             this.Target = Convert.ToUInt32(target);
         }
+
+        public ObjectData(float[] floatFeatures)
+        {
+            this.FloatFeatures = floatFeatures;
+        }
     }
 }

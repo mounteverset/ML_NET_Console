@@ -9,7 +9,7 @@ using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
 using MLAdapter;
-using Microsoft.ML;
+
 
 
 namespace DummyGUI_MLAdapter
