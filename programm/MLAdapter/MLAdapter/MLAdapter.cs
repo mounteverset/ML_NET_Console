@@ -12,7 +12,7 @@ using Microsoft.ML.Data;
 
 namespace MLAdapter
 {
-    public class MLAdapter //: IMLAdapter
+    public class MLAdapter : IMLAdapter
     {
         #region Attributes
         private MLContext MLContext { get; set; }
@@ -25,36 +25,41 @@ namespace MLAdapter
 
         private SchemaDefinition _schemaDefinition = SchemaDefinition.Create(typeof(ObjectData));
 
+        private int[] InputColumns { get; set; }
+
         #endregion
 
         #region Public Methods
         public void TrainModel(DataTable trainingData, int[] inputColumns, int resultColumn)
         {
+            // if abfrage für den fall dass die label column ein string ist
+            // dann mit der methode map value to key arbeiten
+
+            //die anzahl der verschiedenen Values der Labels durch Kreiren eines Hashsets herausfinden und dann Set.Count
             List<ObjectData> data = CreateObjectDataList(trainingData, inputColumns, resultColumn);
             DefineSchemaDefinition(inputColumns);
-            
 
             this.TrainingData = this.MLContext.Data.LoadFromEnumerable(data, this._schemaDefinition);
 
             //Regression warscheinlich nicht gut für Klassifizerung
-            var trainer = this.MLContext.Regression.Trainers.FastTree(
-                                                                labelColumnName: "Target",
-                                                                featureColumnName: "FloatFeatures");
+            //var trainer = this.MLContext.Regression.Trainers.FastTree(
+            //                                                    labelColumnName: "Target",
+            //                                                    featureColumnName: "FloatFeatures");
 
             var trainer2 = this.MLContext.BinaryClassification.Trainers.FastTree(
                                                                         labelColumnName: "Target",
                                                                         featureColumnName: "FloatFeatures");
 
             var trainer3 = this.MLContext.MulticlassClassification.Trainers.OneVersusAll(
-                                                                                binaryEstimator: trainer2,
-                                                                                labelColumnName: "Target");
+                                                                        binaryEstimator: trainer2,
+                                                                        labelColumnName: "Target");
 
             this.MLModel = trainer3.Fit(this.TrainingData);
 
             this.PredictionEngine = this.MLContext.Model.CreatePredictionEngine<ObjectData, ObjectPrediction>(
-                this.MLModel,
-                inputSchemaDefinition: this._schemaDefinition); 
-                //outputSchemaDefinition:SchemaDefinition.Create(typeof(ObjectPrediction)));
+                                                                        this.MLModel,
+                                                                        inputSchemaDefinition: this._schemaDefinition); 
+            //outputSchemaDefinition:SchemaDefinition.Create(typeof(ObjectPrediction)));
 
 
             //var crossValidationResults = this.MLContext.MulticlassClassification.CrossValidate(this.TrainingData, trainer, 5, "Target");
@@ -92,7 +97,7 @@ namespace MLAdapter
             {
                 var singlePrediction = this.PredictionEngine.Predict(row);
                 
-                results.Add((int)singlePrediction.Label);
+                results.Add((int)singlePrediction.Label-1);
             }
 
             return results;
@@ -129,6 +134,23 @@ namespace MLAdapter
         }
 
         private static List<ObjectData> CreateObjectDataList(DataTable dt, int[] inputColumns, int resultColumn)
+        {
+            List<ObjectData> objectDataList = new List<ObjectData>();
+
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                float[] floatFeatures = new float[inputColumns.Length];
+                for (int j = 0; j < inputColumns.Length; j++)
+                {
+                    floatFeatures[j] = Convert.ToSingle(dt.Rows[i][inputColumns[j]]);
+                }
+                int result = Convert.ToInt32(dt.Rows[i][resultColumn]);
+                objectDataList.Add(new ObjectData(floatFeatures, result));
+            }
+            return objectDataList;
+        }
+
+        private static List<ObjectData> CreateObjectDataList(DataTable dt, string[] inputColumns, string resultColumn)
         {
             List<ObjectData> objectDataList = new List<ObjectData>();
 
