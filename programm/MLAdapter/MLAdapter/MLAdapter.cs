@@ -8,6 +8,7 @@ using CommonInterfaces;
 using System.Data;
 using Microsoft.ML;
 using Microsoft.ML.Data;
+using System.IO;
 
 
 namespace MLAdapter
@@ -26,18 +27,30 @@ namespace MLAdapter
         private SchemaDefinition _schemaDefinition = SchemaDefinition.Create(typeof(ObjectData));
 
         private int[] InputColumns { get; set; }
+        private string[] StringInputColumns { get; set; }
+
+        private DataViewSchema InputSchema { get; set; }
 
         #endregion
 
         #region Public Methods
+        /// <summary>
+        /// Training des Machine Learning Modells mit einem Testdatensatz
+        /// </summary>
+        /// <param name="trainingData"></param>
+        /// <param name="inputColumns">Die für das Modell relevanten Spaltennummern als Null-indexiertes Array</param>
+        /// <param name="resultColumn">Die Spaltennummer mit den Labels der Daten</param>
         public void TrainModel(DataTable trainingData, int[] inputColumns, int resultColumn)
         {
             // if abfrage für den fall dass die label column ein string ist
             // dann mit der methode map value to key arbeiten
 
             //die anzahl der verschiedenen Values der Labels durch Kreiren eines Hashsets herausfinden und dann Set.Count
+            this.InputColumns = inputColumns;
+
             List<ObjectData> data = CreateObjectDataList(trainingData, inputColumns, resultColumn);
-            DefineSchemaDefinition(inputColumns);
+            int uniqueValues = GetNumberOfUniqueValues(trainingData, resultColumn);
+            DefineSchemaDefinition(inputColumns, uniqueValues);
 
             this.TrainingData = this.MLContext.Data.LoadFromEnumerable(data, this._schemaDefinition);
 
@@ -56,9 +69,11 @@ namespace MLAdapter
 
             this.MLModel = trainer3.Fit(this.TrainingData);
 
-            this.PredictionEngine = this.MLContext.Model.CreatePredictionEngine<ObjectData, ObjectPrediction>(
-                                                                        this.MLModel,
-                                                                        inputSchemaDefinition: this._schemaDefinition); 
+            this.PredictionEngine = this.MLContext.Model.
+                                        CreatePredictionEngine<ObjectData, ObjectPrediction>(
+                                        this.MLModel,
+                                        inputSchemaDefinition: this._schemaDefinition); 
+            
             //outputSchemaDefinition:SchemaDefinition.Create(typeof(ObjectPrediction)));
 
 
@@ -72,18 +87,49 @@ namespace MLAdapter
             //var topModel = models.ToArray()[0];
             //Console.WriteLine(models.ToArray()[0]);
         }
+
+        /// <summary>
+        /// Trainieren des MachineLearningModels mit den Spaltennamen anstatt den Spaltennummern
+        /// </summary>
+        /// <param name="trainingData"></param>
+        /// <param name="inputColumns"></param>
+        /// <param name="resultColumn"></param>
+        public void TrainModel(DataTable trainingData, string[] inputColumns, string resultColumn)
+        {
+            // tbd
+        }
+        /// <summary>
+        /// MLAdapter gibt die vorhergesagten Werte für die Testdaten zurück, damit sie nachgelagert zur Analyse des Modells verwendet werden können.
+        /// </summary>
+        /// <param name="testData"></param>
+        /// <param name="inputColumns"></param>
+        /// <param name="resultColumn"></param>
+        /// <returns></returns>
         public List<int> TestModel(DataTable testData, int[] inputColumns, int resultColumn)
         {
-            return PredictAndReturnResults(testData, inputColumns);
+            //Check ob beim Trainieren inputColumns belegt wurden und ob diese die gleichen sind für das Trainieren
+            if (this.InputColumns != null && this.InputColumns.SequenceEqual(inputColumns))
+            {
+                return PredictAndReturnResults(testData, inputColumns);
+            }
+            return new List<int>();
         }
         public void LoadModel(string filepath)
-        {
-            throw new NotImplementedException();
-
+        {            
+            this.MLContext.Model.Load(filePath: filepath, out var inputSchema);
+            this.InputSchema = inputSchema;
         }
         public void SaveModel(string filepath, string filename)
         {
-            throw new NotImplementedException();
+
+            this.MLContext.Model.Save(this.MLModel, this.TrainingData.Schema, filePath: filepath);
+            using (StreamWriter sw = new StreamWriter(filepath+filename))
+            {
+                for (int i = 0; i < this.InputColumns.Length; i++)
+                {
+                    sw.Write(this.InputColumns[i] + ",");
+                }  
+            }
         }
 
         public List<int> PredictAndReturnResults(DataTable rawData, int[] inputColumns)
@@ -105,18 +151,27 @@ namespace MLAdapter
 
         public List<int> PredictAndReturnResults(DataTable rawData)
         {
-            var predictionEngine = this.MLContext.Model.CreatePredictionEngine<ObjectData, ObjectPrediction>(this.MLModel, this.TestData.Schema);
-            float[] features = new float[4]{1, 3, 4, 3};
-            ObjectData singleData = new ObjectData(features, 1);
-            ObjectPrediction prediction = predictionEngine.Predict(singleData);
-            
-            return new List<int>();
+            if (this.InputColumns != null)
+            {
+                return PredictAndReturnResults(rawData, this.InputColumns);
+            }
+            return new List<int>(); // nicht sauber, throwException besser hier mit try catch Block
         }
 
         #endregion
 
         #region Private Methods
+        private static int GetNumberOfUniqueValues(DataTable dt, int resultColumn)
+        {
+            HashSet<int> set = new HashSet<int>();
 
+            for (int i = 0; i < dt.Rows.Count-1; i++)
+            {
+                set.Add(Convert.ToInt32(dt.Rows[i][resultColumn]));
+            }
+
+            return set.Count;
+        }
         private static List<ObjectData> CreateObjectDataList(DataTable dt, int[] inputColumns)
         {
             List<ObjectData> objectDataList = new List<ObjectData>();
@@ -177,11 +232,11 @@ namespace MLAdapter
             //this.TrainingData = dataView;
         }
 
-        private void DefineSchemaDefinition(int[] inputColumns)
+        private void DefineSchemaDefinition(int[] inputColumns, int numberOfUniqueValues)
         {
             //var uint_type = Type.GetType("UInt32");
             this._schemaDefinition["FloatFeatures"].ColumnType = new VectorDataViewType(NumberDataViewType.Single, inputColumns.Length);
-            this._schemaDefinition["Target"].ColumnType = new KeyDataViewType(typeof(uint), 3); //die 4 entspricht der Anzahl der versch. Iris- Klassen
+            this._schemaDefinition["Target"].ColumnType = new KeyDataViewType(typeof(uint), numberOfUniqueValues);
             //this._schemaDefinition["Label"].ColumnType = NumberDataViewType.Single 
             //this._schemaDefinition["Target"].ColumnType = new KeyDataViewType(typeof(uint), 4);
         }

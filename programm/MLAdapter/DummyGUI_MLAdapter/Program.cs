@@ -15,8 +15,10 @@ namespace DummyGUI_MLAdapter
     {
         static void Main(string[] args)
         {
-            string filepath = @"../../../../../Beispieldaten.iris.txt";
+            string filepath = @"../../../../../Beispieldaten_iris.txt";
+            string testdata = @"../../../../../Testdaten_iris.txt";
             DataTable dt = HelperFunctions.ConvertCsvToDataTable(filepath);
+            DataTable testdaten = HelperFunctions.ConvertCsvToDataTable(testdata);
             HelperFunctions.PrintDataTableToConsole(dt);
             // HelperFunctions.AssignColumnNamesAndTypes(ref dt);
             //string container = dt.Columns[0].ColumnName;
@@ -27,7 +29,7 @@ namespace DummyGUI_MLAdapter
 
             MLAdapter.MLAdapter mLAdapter = new MLAdapter.MLAdapter();
             mLAdapter.TrainModel(dt, inputColumns, 4);
-            var results = mLAdapter.TestModel(dt, inputColumns, 4);
+            var results = mLAdapter.TestModel(testdaten, inputColumns, 4);
 
             
             /*mLAdapter.TrainModel(dt);
