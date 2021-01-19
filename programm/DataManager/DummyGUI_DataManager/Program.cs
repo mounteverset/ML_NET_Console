@@ -14,8 +14,8 @@ namespace DummyGUI_DataManager
         static void Main(string[] args)
         {
             DataManagerClass dataManager = new DataManagerClass();
-            string filepath = @"C:\Users\casa2\OneDrive\Dokumente\II_third_semester\programmierprojekt\machinelearning-samples-master\machinelearning-samples-master\datasets\taxi-fare-test1.CSV";
-            string filename = "hallo";
+            string filepath = @"C:\Users\casa2\OneDrive\Dokumente\II_third_semester\programmierprojekt\neuronale_netzwerke\programm\DataManager\taxi-fare-test1.CSV";
+            string filename = "FinalCSV";
             string filepath2 = "";
             int[] dataColumns = new int[2];
             int resultColumn = 0;
