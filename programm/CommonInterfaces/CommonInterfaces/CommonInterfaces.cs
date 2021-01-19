@@ -87,12 +87,6 @@ namespace CommonInterfaces
         /// <param name="dataColumns"></param>
         /// <param name="resultColumn"></param>
         void SetColumnsDataType(Dictionary<int,String> dataType);
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="dataColumns"></param>
-        /// <param name="resultColumn"></param>
-        void SetColumnsIOType(int[] dataColumns, int resultColumn);
 
         /// <summary>
         /// 
