@@ -32,7 +32,9 @@ namespace DummyGUI_MLAdapter
             // ML Adapter - Funktionstests
             MLAdapter.MLAdapter mLAdapter = new MLAdapter.MLAdapter();
             mLAdapter.TrainModel(dt, inputColumns, labelColumn);
-            List<int> results = mLAdapter.TestModel(testdaten, inputColumns, labelColumn);            
+            List<int> results = mLAdapter.TestModel(testdaten, inputColumns, labelColumn);
+            double accuracy = HelperFunctions.GetModelAccuracy(testdaten, results, labelColumn);
+            Console.WriteLine(accuracy);
             mLAdapter.SaveModel(@"../", "mnist_model.zip");
             
             // Testen des Ladens und des Vorhersagens
