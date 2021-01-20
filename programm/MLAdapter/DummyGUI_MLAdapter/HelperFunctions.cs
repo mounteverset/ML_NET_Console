@@ -28,28 +28,57 @@ namespace DummyGUI_MLAdapter
             }
         }
 
-        public static DataTable ConvertCsvToDataTable(string filepath)
+        public static DataTable ConvertCsvToDataTable(string filepath, bool hasHeader)
         {
             DataTable dt = new DataTable();
             Regex CSVParser = new Regex(",(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))");
 
             using (StreamReader sr = new StreamReader(filepath))
             {
-                string[] headers = sr.ReadLine().Split(',');
-                foreach (string header in headers)
+                if (hasHeader == true)
                 {
-                    dt.Columns.Add(header);
-                }
-                while (!sr.EndOfStream)
-                {
-                    string[] rows = CSVParser.Split(sr.ReadLine());
-                    DataRow dr = dt.NewRow();
-
-                    for (int i = 0; i < headers.Length; i++)
+                    string[] headers = sr.ReadLine().Split(',');
+                    foreach (string header in headers)
                     {
-                        dr[i] = float.Parse(rows[i].Replace("\"", string.Empty), CultureInfo.InvariantCulture);
+                        dt.Columns.Add(header);
                     }
-                    dt.Rows.Add(dr);
+                    while (!sr.EndOfStream)
+                    {
+                        string[] rows = CSVParser.Split(sr.ReadLine());
+                        DataRow dr = dt.NewRow();
+
+                        for (int i = 0; i < headers.Length; i++)
+                        {
+                            dr[i] = float.Parse(rows[i].Replace("\"", string.Empty), CultureInfo.InvariantCulture);
+                        }
+                        dt.Rows.Add(dr);
+                    }
+                }
+                else
+                {
+                    string[] firstLine = sr.ReadLine().Split(',');
+                    
+                    for (int i = 0; i < firstLine.Length; i++)
+                    {
+                        dt.Columns.Add(i.ToString());
+                    }
+                    DataRow firstRow = dt.NewRow();
+                    for (int i = 0; i < firstLine.Length; i++)
+                    {
+                        firstRow[i] = float.Parse(firstLine[i].Replace("\"", string.Empty), CultureInfo.InvariantCulture);
+                    }
+                    dt.Rows.Add(firstRow);
+                    while (!sr.EndOfStream)
+                    {
+                        string[] rows = CSVParser.Split(sr.ReadLine());
+                        DataRow dr = dt.NewRow();
+
+                        for (int i = 0; i < firstLine.Length; i++)
+                        {
+                            dr[i] = float.Parse(rows[i].Replace("\"", string.Empty), CultureInfo.InvariantCulture);
+                        }
+                        dt.Rows.Add(dr);
+                    }
                 }
             }
             return dt;

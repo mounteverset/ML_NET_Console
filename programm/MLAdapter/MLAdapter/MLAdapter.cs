@@ -35,11 +35,11 @@ namespace MLAdapter
 
         #region Public Methods
         /// <summary>
-        /// Training des Machine Learning Modells mit einem Testdatensatz
+        /// Method to train a ML model for multiclass classification problems
         /// </summary>
-        /// <param name="trainingData"></param>
-        /// <param name="inputColumns">Die für das Modell relevanten Spaltennummern als Null-indexiertes Array</param>
-        /// <param name="resultColumn">Die Spaltennummer mit den Labels der Daten</param>
+        /// <param name="trainingData">Input data used to train the model, values should be floating point numbers</param>
+        /// <param name="inputColumns">Contains the column numbers of the columns used as an input for the ML model training</param>
+        /// <param name="resultColumn">Contains the labels of the corresponding DataRows in the table</param>
         public void TrainModel(DataTable trainingData, int[] inputColumns, int resultColumn)
         {
             // if abfrage für den fall dass die label column ein string ist
@@ -94,35 +94,50 @@ namespace MLAdapter
         /// <param name="trainingData"></param>
         /// <param name="inputColumns"></param>
         /// <param name="resultColumn"></param>
+        /*
         public void TrainModel(DataTable trainingData, string[] inputColumns, string resultColumn)
         {
             // tbd
         }
+        */
+
         /// <summary>
-        /// MLAdapter gibt die vorhergesagten Werte für die Testdaten zurück, damit sie nachgelagert zur Analyse des Modells verwendet werden können.
+        /// Returns the predicted values for the input values, in order to be analyzed in another function
         /// </summary>
-        /// <param name="testData"></param>
-        /// <param name="inputColumns"></param>
+        /// <param name="testData">Input data to test the previously trained model</param>
+        /// <param name="inputColumns">Contains the column numbers of the columns used as an input for the ML model prediction</param>
         /// <param name="resultColumn"></param>
         /// <returns></returns>
         public List<int> TestModel(DataTable testData, int[] inputColumns, int resultColumn)
         {
-            //Check ob beim Trainieren inputColumns belegt wurden und ob diese die gleichen sind für das Trainieren
-            if (this.InputColumns != null && this.InputColumns.SequenceEqual(inputColumns))
-            {
-                return PredictAndReturnResults(testData, inputColumns);
-            }
-            return new List<int>();
+            return PredictAndReturnResults(testData, inputColumns);            
         }
+
+        /// <summary>
+        /// Loads a previously trained model from a .zip file
+        /// </summary>
+        /// <param name="filepath">Contains the full path to the file including the filename</param>
         public void LoadModel(string filepath)
         {            
-            this.MLContext.Model.Load(filePath: filepath, out var inputSchema);
-            this.InputSchema = inputSchema;
+            this.MLModel = this.MLContext.Model.Load(filePath: filepath, out var inputSchema);
+            
+            DefineSchemaDefinition(inputSchema);
+            this.PredictionEngine = this.MLContext.Model.
+                                        CreatePredictionEngine<ObjectData, ObjectPrediction>(
+                                        this.MLModel,
+                                        inputSchema);
         }
+
+        /// <summary>
+        /// Saves the model as a .zip file
+        /// </summary>
+        /// <param name="filepath">Contains the full path to the specified folder without double backslashes</param>
+        /// <param name="filename">Contains the specified filename including .zip</param>
         public void SaveModel(string filepath, string filename)
         {
-
-            this.MLContext.Model.Save(this.MLModel, this.TrainingData.Schema, filePath: filepath);
+            //this.MLContext.Model.Save()
+            this.MLContext.Model.Save(this.MLModel, this.TrainingData.Schema, filePath: Path.Combine(filepath, filename));
+            /*
             using (StreamWriter sw = new StreamWriter(filepath+filename))
             {
                 for (int i = 0; i < this.InputColumns.Length; i++)
@@ -130,8 +145,15 @@ namespace MLAdapter
                     sw.Write(this.InputColumns[i] + ",");
                 }  
             }
+            */
         }
 
+        /// <summary>
+        /// After successfully training the model, this function can be used to receive a prediction from the model given a set of input
+        /// </summary>
+        /// <param name="rawData">Contains all of the required input data for making a prediction using the trained ML Model, the features should match the structure of the training data</param>
+        /// <param name="inputColumns">Specifies which column numbers are used as input data for the ML Model, these have to match the input columns from the training data</param>
+        /// <returns>Returns a list of predictions for each DataRow in the DataTable</returns>
         public List<int> PredictAndReturnResults(DataTable rawData, int[] inputColumns)
         {
             //eine ObjectDataListe erstellen
@@ -149,17 +171,14 @@ namespace MLAdapter
             return results;
         }
 
-        public List<int> PredictAndReturnResults(DataTable rawData)
-        {
-            if (this.InputColumns != null)
-            {
-                return PredictAndReturnResults(rawData, this.InputColumns);
-            }
-            return new List<int>(); // nicht sauber, throwException besser hier mit try catch Block
-        }
-
         #endregion
 
+        /// <summary>
+        /// Used to determine the number of different label classes
+        /// </summary>
+        /// <param name="dt">The input DataTable</param>
+        /// <param name="resultColumn">The column number for the label column</param>
+        /// <returns></returns>
         #region Private Methods
         private static int GetNumberOfUniqueValues(DataTable dt, int resultColumn)
         {
@@ -172,6 +191,12 @@ namespace MLAdapter
 
             return set.Count;
         }
+        /// <summary>
+        /// Helper Function to create lists of the custom ObjectData Type from the passed-in DataTable, used when testing and predicting values, as the label column is left out
+        /// </summary>
+        /// <param name="dt">The input DataTable</param>
+        /// <param name="inputColumns">Contains the column numbers of the columns used as an input for the ML model prediction</param>
+        /// <returns></returns>
         private static List<ObjectData> CreateObjectDataList(DataTable dt, int[] inputColumns)
         {
             List<ObjectData> objectDataList = new List<ObjectData>();
@@ -188,6 +213,13 @@ namespace MLAdapter
             return objectDataList;
         }
 
+        /// <summary>
+        /// Helper Function to create lists of the custom ObjectData Type from the passed-in DataTable, used when training the model
+        /// </summary>
+        /// <param name="dt">The input DataTable</param>
+        /// <param name="inputColumns">Contains the column numbers of the columns used as an input for the ML model training</param>
+        /// <param name="resultColumn">The column number for the label column</param>
+        /// <returns></returns>
         private static List<ObjectData> CreateObjectDataList(DataTable dt, int[] inputColumns, int resultColumn)
         {
             List<ObjectData> objectDataList = new List<ObjectData>();
@@ -205,6 +237,13 @@ namespace MLAdapter
             return objectDataList;
         }
 
+        /// <summary>
+        /// Helper Function to create lists of the custom ObjectData Type from the passed-in DataTable, used when training the model
+        /// </summary>
+        /// <param name="dt">The input DataTable</param>
+        /// <param name="inputColumns">Contains the column names of the columns used as an input for the ML model training</param>
+        /// <param name="resultColumn">The column name for the label column</param>
+        /// <returns></returns>
         private static List<ObjectData> CreateObjectDataList(DataTable dt, string[] inputColumns, string resultColumn)
         {
             List<ObjectData> objectDataList = new List<ObjectData>();
@@ -222,16 +261,28 @@ namespace MLAdapter
             return objectDataList;
         }
 
+        /*
         private void CreateIDataViewFromDataTable(DataTable dataTable)
         {
-            // magic happens here
-
+            
             //var ts = dataTable.AsEnumerable().Select(row => new ObjectData()); //ObjectData als generische Klasse für die Inputs zum ML-Learning
             //IDataView dataView = this.MLContext.Data.LoadFromEnumerable(ts);
 
             //this.TrainingData = dataView;
         }
+        */
 
+        private void DefineSchemaDefinition(DataViewSchema inputSchema)
+        {
+            this._schemaDefinition["FloatFeatures"].ColumnType = inputSchema[0].Type;
+            this._schemaDefinition["Target"].ColumnType = inputSchema[1].Type;
+        }
+
+        /// <summary>
+        /// Helper Function to create a valid Schema Defintion which is required to create an IDataView Object based on the ObjectData class
+        /// </summary>
+        /// <param name="inputColumns">Contains the column names of the columns used as an input for the ML model training</param>
+        /// <param name="numberOfUniqueValues">Number of different label classes</param>
         private void DefineSchemaDefinition(int[] inputColumns, int numberOfUniqueValues)
         {
             //var uint_type = Type.GetType("UInt32");
@@ -243,11 +294,19 @@ namespace MLAdapter
         #endregion
 
         #region Constructors
+        /// <summary>
+        /// Creates a new MLAdapter with a random seed
+        /// </summary>
         public MLAdapter() 
         {
             this.MLContext = new MLContext();
         }
-
+        /// <summary>
+        /// Creates a new MLAdapter with a seed number, if a fixed seed
+        ///  is provided, MLContext environment becomes deterministic, meaning that
+        ///  the results are repeatable and will remain the same across multiple runs
+        /// </summary>
+        /// <param name="seed">Fixed seed number to create a deterministic MLContext</param>
         public MLAdapter(int seed)
         {
             this.MLContext = new MLContext(seed);
