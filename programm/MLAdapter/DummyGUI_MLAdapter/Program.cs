@@ -18,7 +18,7 @@ namespace DummyGUI_MLAdapter
             string filepath = @"../../../../../optdigits-train.csv";
             string testdata = @"../../../../../optdigits-test.csv";
 
-            //Daten präparieren
+            //Prepare the data for the MNIST dataset
             DataTable dt = HelperFunctions.ConvertCsvToDataTable(filepath, false);
             DataTable testdaten = HelperFunctions.ConvertCsvToDataTable(testdata, false);
             HelperFunctions.PrintDataTableToConsole(dt);           
@@ -29,7 +29,7 @@ namespace DummyGUI_MLAdapter
                 inputColumns[i] = i;
             }
             int labelColumn = 64;
-            // ML Adapter - Funktionstests
+            // ML Adapter - function calls
             MLAdapter.MLAdapter mLAdapter = new MLAdapter.MLAdapter();
             mLAdapter.TrainModel(dt, inputColumns, labelColumn);
             List<int> results = mLAdapter.TestModel(testdaten, inputColumns, labelColumn);
@@ -37,12 +37,12 @@ namespace DummyGUI_MLAdapter
             Console.WriteLine(accuracy);
             mLAdapter.SaveModel(@"../", "mnist_model.zip");
             
-            // Testen des Ladens und des Vorhersagens
+            // Test of load and save functionality
             MLAdapter.MLAdapter mLAdapter_Loaded = new MLAdapter.MLAdapter();
             string loadFilePath = "../";
             string fileName = "mnist_model.zip";
             mLAdapter_Loaded.LoadModel(Path.Combine(loadFilePath, fileName));
-            //TestModel entpsricht PredictAndReturnResults
+            //TestModel is the same as PredictAndReturnResults because the statistical analysis used to be outsourced
             var results2 = mLAdapter_Loaded.TestModel(testdaten, inputColumns, 4);
             var results3 = mLAdapter_Loaded.PredictAndReturnResults(testdaten, inputColumns);
         }

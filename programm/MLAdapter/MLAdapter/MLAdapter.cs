@@ -17,14 +17,13 @@ namespace MLAdapter
     {
         #region Attributes
         private MLContext MLContext { get; set; }
-        private ITransformer MLModel { get; set; }
-        private string ModelFilePath { get; set; }
+        private ITransformer MLModel { get; set; }       
         private IDataView TrainingData { get; set; }
         private IDataView TestData { get; set; }
         private IDataView UserData { get; set; }
         private PredictionEngine<ObjectData,ObjectPrediction> PredictionEngine { get; set; }
-
         private SchemaDefinition _schemaDefinition = SchemaDefinition.Create(typeof(ObjectData));
+        //private string ModelFilePath { get; set; } not required nor used in this class
 
         private int[] InputColumns { get; set; }
         private string[] StringInputColumns { get; set; }
@@ -110,6 +109,9 @@ namespace MLAdapter
         /// <returns></returns>
         public List<int> TestModel(DataTable testData, int[] inputColumns, int resultColumn)
         {
+            List<ObjectData> data = CreateObjectDataList(testData, inputColumns, resultColumn);
+            this.TestData = this.MLContext.Data.LoadFromEnumerable(data, this._schemaDefinition);
+
             return PredictAndReturnResults(testData, inputColumns);            
         }
 
@@ -135,17 +137,7 @@ namespace MLAdapter
         /// <param name="filename">Contains the specified filename including .zip</param>
         public void SaveModel(string filepath, string filename)
         {
-            //this.MLContext.Model.Save()
             this.MLContext.Model.Save(this.MLModel, this.TrainingData.Schema, filePath: Path.Combine(filepath, filename));
-            /*
-            using (StreamWriter sw = new StreamWriter(filepath+filename))
-            {
-                for (int i = 0; i < this.InputColumns.Length; i++)
-                {
-                    sw.Write(this.InputColumns[i] + ",");
-                }  
-            }
-            */
         }
 
         /// <summary>

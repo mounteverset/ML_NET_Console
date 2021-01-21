@@ -32,6 +32,29 @@ namespace DummyGUI_MLAdapter
             }
         }
         /// <summary>
+        /// Outputs all values from the DataTable that is passed in
+        /// </summary>
+        /// <param name="dt">The table which will be printed into the Console</param>
+        /// <param name="cutOff">Defines how many rows of the DataTable will be printed</param>
+        public static void PrintDataTableToConsole(DataTable dt, int cutOff)
+        {
+            if (cutOff < dt.Rows.Count)
+            {
+                for (int i = 0; i < cutOff; i++) //looping through all rows including the column up until the cutoff. change `i=1` if need to exclude the columns display
+                {
+                    for (int j = 0; j < dt.Columns.Count; j++) //looping through all columns
+                    {
+                        Console.Write(dt.Rows[i][j] + " "); //display of the data
+                    }
+                    Console.WriteLine();
+                }
+            }
+            else
+            {
+                PrintDataTableToConsole(dt);
+            }
+        }
+        /// <summary>
         /// Reads in a CSV
         /// </summary>
         /// <param name="filepath">Filepath to the CSV file including the filename and file type</param>
