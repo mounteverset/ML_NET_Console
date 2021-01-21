@@ -40,7 +40,7 @@ namespace CommonInterfaces
         /// </summary>
         /// <param name="rawData"></param>
         /// <returns></returns>
-        List<int> PredictAndReturnResults(DataTable rawData);
+        List<int> PredictAndReturnResults(DataTable rawData, int[] inputColumns);
     }
 
 

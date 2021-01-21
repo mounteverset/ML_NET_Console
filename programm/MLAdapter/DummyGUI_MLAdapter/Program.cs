@@ -15,32 +15,36 @@ namespace DummyGUI_MLAdapter
     {
         static void Main(string[] args)
         {
-            string filepath = @"../../../../../Beispieldaten_iris.txt";
-            string testdata = @"../../../../../Testdaten_iris.txt";
-            DataTable dt = HelperFunctions.ConvertCsvToDataTable(filepath);
-            DataTable testdaten = HelperFunctions.ConvertCsvToDataTable(testdata);
-            HelperFunctions.PrintDataTableToConsole(dt);
-            // HelperFunctions.AssignColumnNamesAndTypes(ref dt);
-            //string container = dt.Columns[0].ColumnName;
-            //var container_2 = dt.Columns[0].DataType;
-            //var value = dt.Rows[0][2].GetType();
+            string filepath = @"../../../../../optdigits-train.csv";
+            string testdata = @"../../../../../optdigits-test.csv";
+
+            //Prepare the data for the MNIST dataset
+            DataTable dt = HelperFunctions.ConvertCsvToDataTable(filepath, false);
+            DataTable testdaten = HelperFunctions.ConvertCsvToDataTable(testdata, false);
+            HelperFunctions.PrintDataTableToConsole(dt);           
             Console.WriteLine("********************************************************************************");
-            int[] inputColumns = new int[] {0, 1, 2, 3};
-
+            int[] inputColumns = new int[64];
+            for (int i = 0; i < 64; i++)
+            {
+                inputColumns[i] = i;
+            }
+            int labelColumn = 64;
+            // ML Adapter - function calls
             MLAdapter.MLAdapter mLAdapter = new MLAdapter.MLAdapter();
-            mLAdapter.TrainModel(dt, inputColumns, 4);
-            var results = mLAdapter.TestModel(testdaten, inputColumns, 4);
-
+            mLAdapter.TrainModel(dt, inputColumns, labelColumn);
+            List<int> results = mLAdapter.TestModel(testdaten, inputColumns, labelColumn);
+            double accuracy = HelperFunctions.GetModelAccuracy(testdaten, results, labelColumn);
+            Console.WriteLine(accuracy);
+            mLAdapter.SaveModel(@"../", "mnist_model.zip");
             
-            /*mLAdapter.TrainModel(dt);
-            mLAdapter.TestModel(dt);
-            DataTable data = new DataTable();
-            List<int> results = mLAdapter.PredictAndReturnResults(data);
-            
-            
-            mLAdapter.SaveModel("hier", "name");
-            mLAdapter.LoadModel("dort");
-            */
+            // Test of load and save functionality
+            MLAdapter.MLAdapter mLAdapter_Loaded = new MLAdapter.MLAdapter();
+            string loadFilePath = "../";
+            string fileName = "mnist_model.zip";
+            mLAdapter_Loaded.LoadModel(Path.Combine(loadFilePath, fileName));
+            //TestModel is the same as PredictAndReturnResults because the statistical analysis used to be outsourced
+            var results2 = mLAdapter_Loaded.TestModel(testdaten, inputColumns, 4);
+            var results3 = mLAdapter_Loaded.PredictAndReturnResults(testdaten, inputColumns);
         }
 
        
