@@ -54,7 +54,7 @@ namespace DataManager
             //Mit der using-Anweisung wird auch der StreamReader geschlossen.
             using (StreamReader sr = new StreamReader(filepath))
             {
-                //Spalten aus der CSV-Datei lesen und in ein Array "headers" speichern, 
+                //Spalten aus der CSV-Datei werden gelesen und in ein Array "headers" gespeichert, 
                 //bis das Ende der Datei erreicht ist.
                 string[] headers = sr.ReadLine().Split(',');
                 //Die Spalten der CSV-Datei werden in ein DataTable gespeichert
@@ -65,14 +65,14 @@ namespace DataManager
                 //Wenn die aktuelle Streamposition sich nicht am Ende des Streams befindet dann...
                 while (!sr.EndOfStream)
                 {
-                    //Zeilen aus der CSV-Datei lesen und in ein Array "rows" speichern, bis 
+                    //Zeilen aus der CSV-Datei werden gelesen und in ein Array "rows" gespeichert, bis 
                     // das Ende der CSV-Datei erreicht ist.
                     string[] rows = CSVParser.Split(sr.ReadLine());
                     DataRow dr = dt.NewRow();
                     //Jede Zeile des DataTables wird vollständig ausgefüllt
                     for (int i = 0; i < headers.Length; i++)
                     {
-                        //Jedes Vorkommen von "\"  soll mit einem leeren Zeichen ersetzt werden.
+                        //Jedes Vorkommen von "\"  wird mit einem leeren Zeichen ersetzt .
                         dr[i] = rows[i].Replace("\"", string.Empty);
                     }
                     //Ist eine Zeile voll (steht genauso wie in der CSV-Datei), dann 
@@ -145,7 +145,7 @@ namespace DataManager
         /// Die Spaltentypen werden festgelegt
         /// </summary>
         /// <param name="dataType"></param>
-        public void SetColumnsDataType(Dictionary<int, String> dataType)//...fertig...
+        public void SetColumnsDataType(Dictionary<int, String> dataType)
          {
             DataTable dt = new DataTable();
             // dt bekommt die gleichen Spalten und Linien wie _UserTable 
@@ -155,37 +155,11 @@ namespace DataManager
                 //Der Datentyp der Spalten von dt wird geändert
                 dt.Columns[i].DataType = System.Type.GetType(dataType[i]);
             }
-            //_UserTable hat jetzt die selben Linien und Spalten aber mit veränderten Datentypen
+            //_UserTable hat jetzt die selben Zeilen und Spalten aber mit veränderten Datentypen
             _UserTable = dt;
      
 
         }
-
-
-
-        public void SetColumnsIOType(int[] dataColumns, int resultColumn)
-        {
-            dataColumns = new int[_UserTable.Columns.Count - 1];
-            int j = 0;
-            for (int i = 0; i < _UserTable.Columns.Count; i++)
-            {
-               string a= _UserTable.Columns[i].ColumnName;
-                if (a== "ML_Result")
-                {
-                    resultColumn = i + 1;
-                }
-                else
-                {
-                    if (j<dataColumns.Length)
-                    {
-                        dataColumns[j] = i + 1;
-                        j++;
-                    }
-                    
-                }
-            }
-        }//Weg???
-
 
         /// <summary>
         /// MLResult wird festgelegt  
@@ -199,6 +173,7 @@ namespace DataManager
             for (int i = 0; i < _UserTable.Rows.Count; i++)
             {
                 DataRow dr = _UserTable.Rows[i];
+                
                 dr["ML_Result"]= mlResult[i];
             }
         }
