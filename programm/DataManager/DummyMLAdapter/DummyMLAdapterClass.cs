@@ -31,7 +31,7 @@ namespace DummyMLAdapter
             throw new NotImplementedException();
             // Das ML.Model wird gespeichert
         }
-        public List<int> PredictAndReturnResults(DataTable rawData)
+        public List<int> PredictAndReturnResults(DataTable rawData, int[] inputColumns)
         {
             //output
             return new List<int>();

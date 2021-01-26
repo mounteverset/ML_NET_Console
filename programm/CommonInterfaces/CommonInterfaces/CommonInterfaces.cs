@@ -61,6 +61,14 @@ namespace CommonInterfaces
         /// 
         /// </summary>
         List<int> ML_Result { get; }
+        /// <summary>
+        /// 
+        /// </summary>
+        int[] InputColumns { get; }
+        /// <summary>
+        /// 
+        /// </summary>
+        int LabelColumn { get; }
 
         /// <summary>
         /// 
@@ -93,7 +101,16 @@ namespace CommonInterfaces
         /// </summary>
         /// <param name="mlResult"></param>
         void SetMLResult(List<int> mlResult);
-        
+        /// <summary>
+        /// 
+        /// </summary>
+        void SetInputColumns();
+        /// <summary>
+        /// 
+        /// </summary>
+        void SetLabelColumn();
+    
+
     }
 
     /// <summary>

@@ -21,7 +21,7 @@ namespace DummyGUI_DataManager
             dataType.Add(0, "System.Int32");
             dataType.Add(1, "System.Double");
             dataType.Add(2, "System.Boolean");
-            dataType.Add(2, "System.Int32");
+            dataType.Add(3, "System.Int32");
             #region MethodCalls
             dataManager.LoadCSV(filepath);
             dataManager.SetColumnsDataType(dataType);

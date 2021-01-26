@@ -33,10 +33,14 @@ namespace DataManager
         /// </summary>
         public List<int> ML_Result { get; }
         private string CSV_FilePath { get; set; }  
+        public int[] InputColumns { get;  }
+        public int LabelColumn { get; }
+        private int[] _InputColumns { get; set; }
+        private int _LabelColumn { get; set; }
         #endregion
 
- #region Constructors
-       public DataManagerClass() { }
+        #region Constructors
+        public DataManagerClass() { }
        public DataManagerClass(string CSV_FilePath) { }
         #endregion
 
@@ -93,7 +97,7 @@ namespace DataManager
         public void SaveCSV(string filepath, string filename)
         {
             //filepath der neuen CSV-Datei
-            filepath = $@"C:\Users\casa2\OneDrive\Dokumente\II_third_semester\programmierprojekt\neuronale_netzwerke\programm\DataManager\{filename}.CSV";
+            filepath = $@"C:\Users\casa2\OneDrive\Dokumente\II_third_semester\programmierprojekt\neuronale_netzwerke\programm\DataManager\{FileName(filename)}.CSV";
             //Eine leere CSV-Datei wird erstellt
             using (StreamWriter sw = new StreamWriter(filepath, false, System.Text.Encoding.Default))//JJJJ
             {
@@ -125,6 +129,17 @@ namespace DataManager
                 }
             }
 
+        }
+        /// <summary>
+        /// Der Datei-Name wird festgelegt
+        /// </summary>
+        /// <param name="f"></param>
+        /// <returns></returns>
+        public string FileName(string f)
+        {
+            Console.Write("Geben Sie einen Datei-Namen ein: ");
+            f = Console.ReadLine();      
+            return f;
         }
 
 
@@ -158,6 +173,16 @@ namespace DataManager
             //_UserTable hat jetzt die selben Zeilen und Spalten aber mit veränderten Datentypen
             _UserTable = dt;
      
+
+        }
+
+        public void SetInputColumns()
+        {
+
+        }
+
+        public void SetLabelColumn()
+        {
 
         }
 
