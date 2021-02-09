@@ -9,6 +9,8 @@ using System.Data;
 using Microsoft.ML;
 using Microsoft.ML.Data;
 using System.IO;
+using DataManager;
+
 
 
 namespace MLAdapter
@@ -39,17 +41,17 @@ namespace MLAdapter
         /// <param name="trainingData">Input data used to train the model, values should be floating point numbers</param>
         /// <param name="inputColumns">Contains the column numbers of the columns used as an input for the ML model training</param>
         /// <param name="resultColumn">Contains the labels of the corresponding DataRows in the table</param>
-        public void TrainModel(DataTable trainingData, int[] inputColumns, int resultColumn)
+        public void TrainModel(IDataManager dataManager)
         {
             // if abfrage für den fall dass die label column ein string ist
             // dann mit der methode map value to key arbeiten
 
             //die anzahl der verschiedenen Values der Labels durch Kreiren eines Hashsets herausfinden und dann Set.Count
-            this.InputColumns = inputColumns;
+            this.InputColumns = dataManager.InputColumns;
 
-            List<ObjectData> data = CreateObjectDataList(trainingData, inputColumns, resultColumn);
-            int uniqueValues = GetNumberOfUniqueValues(trainingData, resultColumn);
-            DefineSchemaDefinition(inputColumns, uniqueValues);
+            List<ObjectData> data = CreateObjectDataList(dataManager.UserTable, dataManager.InputColumns, dataManager.LabelColumn);
+            int uniqueValues = GetNumberOfUniqueValues(dataManager.UserTable, dataManager.LabelColumn);
+            DefineSchemaDefinition(dataManager.InputColumns, uniqueValues);
 
             this.TrainingData = this.MLContext.Data.LoadFromEnumerable(data, this._schemaDefinition);
 
@@ -107,12 +109,12 @@ namespace MLAdapter
         /// <param name="inputColumns">Contains the column numbers of the columns used as an input for the ML model prediction</param>
         /// <param name="resultColumn"></param>
         /// <returns></returns>
-        public List<int> TestModel(DataTable testData, int[] inputColumns, int resultColumn)
+        public List<int> TestModel(IDataManager dataManager)
         {
-            List<ObjectData> data = CreateObjectDataList(testData, inputColumns, resultColumn);
+            List<ObjectData> data = CreateObjectDataList(dataManager.UserTable, dataManager.InputColumns, dataManager.LabelColumn);
             this.TestData = this.MLContext.Data.LoadFromEnumerable(data, this._schemaDefinition);
 
-            return PredictAndReturnResults(testData, inputColumns);            
+            return PredictAndReturnResults(dataManager);            
         }
 
         /// <summary>
@@ -146,10 +148,10 @@ namespace MLAdapter
         /// <param name="rawData">Contains all of the required input data for making a prediction using the trained ML Model, the features should match the structure of the training data</param>
         /// <param name="inputColumns">Specifies which column numbers are used as input data for the ML Model, these have to match the input columns from the training data</param>
         /// <returns>Returns a list of predictions for each DataRow in the DataTable</returns>
-        public List<int> PredictAndReturnResults(DataTable rawData, int[] inputColumns)
+        public List<int> PredictAndReturnResults(IDataManager dataManager)
         {
             //eine ObjectDataListe erstellen
-            List<ObjectData> data = CreateObjectDataList(rawData, inputColumns);
+            List<ObjectData> data = CreateObjectDataList(dataManager.UserTable, dataManager.InputColumns);
             List<int> results = new List<int>();
             
             //for Schleife für alle Rows in rawData und dann das Ergebnis in eine Liste schreiben

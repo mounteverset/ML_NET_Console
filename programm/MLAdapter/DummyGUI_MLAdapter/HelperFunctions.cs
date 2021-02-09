@@ -221,5 +221,13 @@ namespace DummyGUI_MLAdapter
             return (float)counter / (float)actualLabels.Count;
         }
         
+        public static string[] GetFolderContent (string folderpath)
+        {
+            
+            string[] files = Directory.GetFiles(folderpath, "*.csv", SearchOption.TopDirectoryOnly);
+            return files;
+        }
+
+
     }
 }

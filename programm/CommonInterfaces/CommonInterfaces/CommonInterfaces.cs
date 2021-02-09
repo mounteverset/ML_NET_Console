@@ -17,14 +17,14 @@ namespace CommonInterfaces
         /// 
         /// </summary>
         /// <param name="trainingData"></param>
-        void TrainModel(DataTable trainingData, int[] inputColumns, int resultColumn);
+        void TrainModel(IDataManager dataManager);
         
         /// <summary>
         /// 
         /// </summary>
         /// <param name="testData"></param>
         /// <returns></returns>
-        List<int> TestModel(DataTable testData, int[] inputColumns, int resultColumn);
+        List<int> TestModel(IDataManager dataManager);
         void LoadModel(string filepath);
 
 
@@ -40,7 +40,7 @@ namespace CommonInterfaces
         /// </summary>
         /// <param name="rawData"></param>
         /// <returns></returns>
-        List<int> PredictAndReturnResults(DataTable rawData, int[] inputColumns);
+        List<int> PredictAndReturnResults(IDataManager dataManager);
     }
 
 
@@ -74,7 +74,7 @@ namespace CommonInterfaces
         /// 
         /// </summary>
         /// <param name="filepath"></param>
-        void LoadCSV(string filepath);
+        void LoadCSV(string filepath, bool hasHeader);
 
         /// <summary>
         /// 
@@ -104,11 +104,11 @@ namespace CommonInterfaces
         /// <summary>
         /// 
         /// </summary>
-        void SetInputColumns();
+        void SetInputColumns(int[] inputColumns);
         /// <summary>
         /// 
         /// </summary>
-        void SetLabelColumn();
+        void SetLabelColumn(int inputColumns);
     
 
     }

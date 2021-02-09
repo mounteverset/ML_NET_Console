@@ -7,7 +7,7 @@ using CommonInterfaces;
 using System.Data;
 using System.IO;
 using System.Text.RegularExpressions;
-
+using System.Globalization;
 
 namespace DataManager
 {
@@ -33,8 +33,20 @@ namespace DataManager
         /// </summary>
         public List<int> ML_Result { get; }
         private string CSV_FilePath { get; set; }  
-        public int[] InputColumns { get;  }
-        public int LabelColumn { get; }
+        public int[] InputColumns
+        {
+            get
+            {
+                return this._InputColumns;
+            }
+        }
+        public int LabelColumn 
+        { 
+            get
+            {
+                return this._LabelColumn;
+            }
+        }
         private int[] _InputColumns { get; set; }
         private int _LabelColumn { get; set; }
         #endregion
@@ -49,39 +61,90 @@ namespace DataManager
         /// Die CSV-Datei wird in ein Datatable konvertiert
         /// </summary>
         /// <param name="filepath"></param>
-        public void LoadCSV(string filepath)
+        public void LoadCSV(string filepath, bool hasHeader)
          {
-            DataTable dt = new DataTable();    
-            //Erleichtert das Analysieren der CSV-Datei
+            //DataTable dt = new DataTable();    
+            ////Erleichtert das Analysieren der CSV-Datei
+            //Regex CSVParser = new Regex(",(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))");
+            ////Eine Instanz sr von StreamReader wird  zum Lesen aus einer Datei erzeugt.
+            ////Mit der using-Anweisung wird auch der StreamReader geschlossen.
+            //using (StreamReader sr = new StreamReader(filepath))
+            //{
+            //    //Spalten aus der CSV-Datei werden gelesen und in ein Array "headers" gespeichert, 
+            //    //bis das Ende der Datei erreicht ist.
+            //    string[] headers = sr.ReadLine().Split(',');
+            //    //Die Spalten der CSV-Datei werden in ein DataTable gespeichert
+            //    foreach (string header in headers)
+            //    {
+            //        dt.Columns.Add(header);
+            //    }
+            //    //Wenn die aktuelle Streamposition sich nicht am Ende des Streams befindet dann...
+            //    while (!sr.EndOfStream)
+            //    {
+            //        //Zeilen aus der CSV-Datei werden gelesen und in ein Array "rows" gespeichert, bis 
+            //        // das Ende der CSV-Datei erreicht ist.
+            //        string[] rows = CSVParser.Split(sr.ReadLine());
+            //        DataRow dr = dt.NewRow();
+            //        //Jede Zeile des DataTables wird vollständig ausgefüllt
+            //        for (int i = 0; i < headers.Length; i++)
+            //        {
+            //            //Jedes Vorkommen von "\"  wird mit einem leeren Zeichen ersetzt .
+            //            dr[i] = rows[i].Replace("\"", string.Empty);
+            //        }
+            //        //Ist eine Zeile voll (steht genauso wie in der CSV-Datei), dann 
+            //        //wird sie zum DataTable hinzufügt
+            //        dt.Rows.Add(dr);
+            //    }
+            //}
+            DataTable dt = new DataTable();
             Regex CSVParser = new Regex(",(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))");
-            //Eine Instanz sr von StreamReader wird  zum Lesen aus einer Datei erzeugt.
-            //Mit der using-Anweisung wird auch der StreamReader geschlossen.
+
             using (StreamReader sr = new StreamReader(filepath))
             {
-                //Spalten aus der CSV-Datei werden gelesen und in ein Array "headers" gespeichert, 
-                //bis das Ende der Datei erreicht ist.
-                string[] headers = sr.ReadLine().Split(',');
-                //Die Spalten der CSV-Datei werden in ein DataTable gespeichert
-                foreach (string header in headers)
+                if (hasHeader == true)
                 {
-                    dt.Columns.Add(header);
-                }
-                //Wenn die aktuelle Streamposition sich nicht am Ende des Streams befindet dann...
-                while (!sr.EndOfStream)
-                {
-                    //Zeilen aus der CSV-Datei werden gelesen und in ein Array "rows" gespeichert, bis 
-                    // das Ende der CSV-Datei erreicht ist.
-                    string[] rows = CSVParser.Split(sr.ReadLine());
-                    DataRow dr = dt.NewRow();
-                    //Jede Zeile des DataTables wird vollständig ausgefüllt
-                    for (int i = 0; i < headers.Length; i++)
+                    string[] headers = sr.ReadLine().Split(',');
+                    foreach (string header in headers)
                     {
-                        //Jedes Vorkommen von "\"  wird mit einem leeren Zeichen ersetzt .
-                        dr[i] = rows[i].Replace("\"", string.Empty);
+                        dt.Columns.Add(header);
                     }
-                    //Ist eine Zeile voll (steht genauso wie in der CSV-Datei), dann 
-                    //wird sie zum DataTable hinzufügt
-                    dt.Rows.Add(dr);
+                    while (!sr.EndOfStream)
+                    {
+                        string[] rows = CSVParser.Split(sr.ReadLine());
+                        DataRow dr = dt.NewRow();
+
+                        for (int i = 0; i < headers.Length; i++)
+                        {
+                            dr[i] = float.Parse(rows[i].Replace("\"", string.Empty), CultureInfo.InvariantCulture);
+                        }
+                        dt.Rows.Add(dr);
+                    }
+                }
+                else
+                {
+                    string[] firstLine = sr.ReadLine().Split(',');
+
+                    for (int i = 0; i < firstLine.Length; i++)
+                    {
+                        dt.Columns.Add(i.ToString());
+                    }
+                    DataRow firstRow = dt.NewRow();
+                    for (int i = 0; i < firstLine.Length; i++)
+                    {
+                        firstRow[i] = float.Parse(firstLine[i].Replace("\"", string.Empty), CultureInfo.InvariantCulture);
+                    }
+                    dt.Rows.Add(firstRow);
+                    while (!sr.EndOfStream)
+                    {
+                        string[] rows = CSVParser.Split(sr.ReadLine());
+                        DataRow dr = dt.NewRow();
+
+                        for (int i = 0; i < firstLine.Length; i++)
+                        {
+                            dr[i] = float.Parse(rows[i].Replace("\"", string.Empty), CultureInfo.InvariantCulture);
+                        }
+                        dt.Rows.Add(dr);
+                    }
                 }
             }
             _UserTable = dt;
@@ -176,14 +239,14 @@ namespace DataManager
 
         }
 
-        public void SetInputColumns()
+        public void SetInputColumns(int[] inputColumns)
         {
-
+            this._InputColumns = inputColumns;
         }
 
-        public void SetLabelColumn()
+        public void SetLabelColumn(int labelColumn)
         {
-
+            this._LabelColumn = labelColumn;
         }
 
         /// <summary>
