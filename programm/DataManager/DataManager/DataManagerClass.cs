@@ -160,7 +160,8 @@ namespace DataManager
         public void SaveCSV(string filepath, string filename)
         {
             //filepath der neuen CSV-Datei
-            filepath = $@"C:\Users\casa2\OneDrive\Dokumente\II_third_semester\programmierprojekt\neuronale_netzwerke\programm\DataManager\{FileName(filename)}.CSV";
+            //filepath = $@"C:\Users\casa2\OneDrive\Dokumente\II_third_semester\programmierprojekt\neuronale_netzwerke\programm\DataManager\{FileName(filename)}.CSV";
+            string saveFilePath = Path.Combine(filepath, String.Concat(filename, ".csv"));
             //Eine leere CSV-Datei wird erstellt
             using (StreamWriter sw = new StreamWriter(filepath, false, System.Text.Encoding.Default))//JJJJ
             {
