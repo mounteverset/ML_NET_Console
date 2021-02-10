@@ -131,7 +131,7 @@ namespace DummyGUI_MLAdapter
                         {
                             Console.WriteLine(e.Message);
                             Console.ReadKey(true);
-                            repeat = GetRestartResponse(consoleKey);
+                            repeat = GetRestartResponse(consoleKey); 
                             continue;
                         }
                     }
