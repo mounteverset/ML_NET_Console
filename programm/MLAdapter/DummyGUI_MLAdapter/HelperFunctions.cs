@@ -228,6 +228,11 @@ namespace DummyGUI_MLAdapter
             return files;
         }
 
+        public static string[] GetModelFolderContent (string folderpath)
+        {
+            string[] files = Directory.GetFiles(folderpath, "*.zip", SearchOption.TopDirectoryOnly);
+            return files;
+        }
 
     }
 }

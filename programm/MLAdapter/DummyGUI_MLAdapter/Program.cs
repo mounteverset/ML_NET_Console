@@ -24,11 +24,14 @@ namespace DummyGUI_MLAdapter
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.White;
             bool modelLoaded = false;
-            string folderpath = @"../../../../../";
-            string[] folderContent = HelperFunctions.GetFolderContent(folderpath);
+            string folderpath = @"../../../../../Datasets";
+            string modelpath = @"../../../../../ML_Models";
+            
 
             do
-            {   
+            {
+                string[] folderContent = HelperFunctions.GetFolderContent(folderpath);
+                string[] modelFolderContent = HelperFunctions.GetModelFolderContent(modelpath);
                 if (modelLoaded == false)
                 {
                     DisplayDefaultHomescreen();
@@ -37,7 +40,7 @@ namespace DummyGUI_MLAdapter
                     // Neue Tabelle laden und Modell trainieren
                     if (consoleKey.Key == ConsoleKey.A)
                     {
-                        
+
                         int resultCSV = DisplayCSVChoice(folderContent);
                         bool hasHeader = GetHeaderResponse(consoleKey);
                         try
@@ -82,13 +85,15 @@ namespace DummyGUI_MLAdapter
                         {
                             mLAdapter.TrainModel(dataManager);
                             Console.WriteLine("\nDas Trainieren des Modells war erfolgreich.");
-                            Console.WriteLine("\nDrücken Sie eine beliebige Taste um fortzufahren...");
+                            Console.WriteLine("\nDrücken Sie eine beliebige Taste um mit dem Testen des Modells fortzufahren...");
+                            Console.ReadKey(true);
+
                         }
                         catch (Exception e)
                         {
                             Console.WriteLine(e.Message);
                         }
-                        
+
                         int testCSV = DisplayCSVChoice(folderContent);
 
                         try
@@ -116,11 +121,13 @@ namespace DummyGUI_MLAdapter
                     // ML Modell laden
                     else if (consoleKey.Key == ConsoleKey.B)
                     {
-                        string filepath = GetFilepathResponse();
+                        //string filepath = GetFilepathResponse();
+
+                        int resultModel = GetLoadModelResponse(modelFolderContent);
 
                         try
                         {
-                            mLAdapter.LoadModel(filepath);
+                            mLAdapter.LoadModel(modelFolderContent[resultModel - 1]);
                             Console.WriteLine("\nDas Laden des Modells war erfolgreich.");
                             Console.WriteLine("Drücken Sie eine beliebige Taste um fortzufahren...");
                             modelLoaded = true;
@@ -135,6 +142,31 @@ namespace DummyGUI_MLAdapter
                             continue;
                         }
                     }
+                    //else if (consoleKey.Key == ConsoleKey.B)
+                    //{
+                    //    string filepath = GetFilepathResponse();
+
+                    //    try
+                    //    {
+                    //        mLAdapter.LoadModel(filepath);
+                    //        Console.WriteLine("\nDas Laden des Modells war erfolgreich.");
+                    //        Console.WriteLine("Drücken Sie eine beliebige Taste um fortzufahren...");
+                    //        modelLoaded = true;
+                    //        repeat = true;
+                    //        Console.ReadKey(true);
+                    //    }
+                    //    catch (Exception e)
+                    //    {
+                    //        Console.WriteLine(e.Message);
+                    //        Console.ReadKey(true);
+                    //        repeat = GetRestartResponse(consoleKey);
+                    //        continue;
+                    //    }
+                    //}
+                    else if (consoleKey.Key == ConsoleKey.X)
+                    {
+                        TriggerShutdown();
+                    }
                     else
                     {
                         repeat = DisplayCharNotRecognized(consoleKey);
@@ -146,9 +178,11 @@ namespace DummyGUI_MLAdapter
                     DisplayFullHomescreen();
 
                     ConsoleKeyInfo consoleKey = Console.ReadKey(true);
+
                     //Neue Tabelle laden und Modell trainieren
-                    if (consoleKey.Key == ConsoleKey.A) 
+                    if (consoleKey.Key == ConsoleKey.A)
                     {
+
                         int resultCSV = DisplayCSVChoice(folderContent);
                         bool hasHeader = GetHeaderResponse(consoleKey);
                         try
@@ -164,7 +198,10 @@ namespace DummyGUI_MLAdapter
                             repeat = GetRestartResponse(consoleKey);
                             continue;
                         }
-                        Console.BufferWidth = dataManager.UserTable.Columns.Count * 5 + 2;
+
+                        if (Console.BufferWidth < dataManager.UserTable.Columns.Count * 5)
+                            Console.BufferWidth = dataManager.UserTable.Columns.Count * 5 + 2;
+
                         PrintDataTableToConsole(dataManager.UserTable, 5);
 
                         // Input Spalten auswählen
@@ -186,18 +223,18 @@ namespace DummyGUI_MLAdapter
                             repeat = true;
                             continue;
                         }
-
                         try
                         {
                             mLAdapter.TrainModel(dataManager);
+                            Console.WriteLine("\nDas Trainieren des Modells war erfolgreich.");
+                            Console.WriteLine("\nDrücken Sie eine beliebige Taste um mit dem Testen des Modells fortzufahren...");
+                            Console.ReadKey(true);
 
                         }
                         catch (Exception e)
                         {
                             Console.WriteLine(e.Message);
-
                         }
-                        
 
                         int testCSV = DisplayCSVChoice(folderContent);
 
@@ -217,21 +254,26 @@ namespace DummyGUI_MLAdapter
                         List<int> testResults = mLAdapter.TestModel(dataManager);
 
                         DisplayModelAccuracy(testResults, dataManager);
+
+                        modelLoaded = true;
+
+                        repeat = true;
                     }
+
                     //ML Modell laden
-                    else if (consoleKey.Key == ConsoleKey.B) 
+                    else if (consoleKey.Key == ConsoleKey.B)
                     {
-                        
-                        
-                        
-                        string filepath = GetFilepathResponse();
+                        //string filepath = GetFilepathResponse();
+
+                        int resultModel = GetLoadModelResponse(modelFolderContent);
 
                         try
                         {
-                            mLAdapter.LoadModel(filepath);
+                            mLAdapter.LoadModel(modelFolderContent[resultModel - 1]);
                             Console.WriteLine("\nDas Laden des Modells war erfolgreich.");
                             Console.WriteLine("Drücken Sie eine beliebige Taste um fortzufahren...");
                             modelLoaded = true;
+                            repeat = true;
                             Console.ReadKey(true);
                         }
                         catch (Exception e)
@@ -242,8 +284,9 @@ namespace DummyGUI_MLAdapter
                             continue;
                         }
                     }
+
                     //Modell anwenden
-                    else if (consoleKey.Key == ConsoleKey.C) 
+                    else if (consoleKey.Key == ConsoleKey.C)
                     {
                         int resultCSV = DisplayCSVChoice(folderContent);
                         bool hasHeader = GetHeaderResponse(consoleKey);
@@ -252,13 +295,7 @@ namespace DummyGUI_MLAdapter
                             //DataTable dt = HelperFunctions.ConvertCsvToDataTable(folderContent[resultCSV - 1], false);
                             dataManager.LoadCSV(folderContent[resultCSV - 1], hasHeader);
 
-                            // noch check ob die input spalten schon belegt sind einbauen und ggf. nochmal abfragen
-                            if (dataManager.InputColumns == null)
-                            {
-                                dataManager.SetInputColumns(GetInputColumnsResponse(dataManager.UserTable.Columns.Count, consoleKey));
-                            }
-                            dataManager.SetMLResult(mLAdapter.PredictAndReturnResults(dataManager));
-                            
+                            // noch check ob die input spalten schon belegt sind einbauen und ggf. nochmal abfragen 
                         }
                         catch (Exception e)
                         {
@@ -268,15 +305,54 @@ namespace DummyGUI_MLAdapter
                             continue;
                         }
 
-                    }
-                    //Modell speichern
-                    else if (consoleKey.Key == ConsoleKey.D) 
-                    {
-                        string filename = GetSaveFilenameResponse();
-                        string filepath = GetSaveFilepathResponse();
+                        if (Console.BufferWidth < dataManager.UserTable.Columns.Count * 5)
+                            Console.BufferWidth = dataManager.UserTable.Columns.Count * 5 + 2;
+
+                        if (dataManager.InputColumns == null)
+                        {
+                            PrintDataTableToConsole(dataManager.UserTable, 5);
+                            dataManager.SetInputColumns(GetInputColumnsResponse(dataManager.UserTable.Columns.Count, consoleKey));
+                        }
+
+
+
+                        dataManager.SetMLResult(mLAdapter.PredictAndReturnResults(dataManager));
+
+                        PrintDataTableToConsole(dataManager.UserTable, dataManager.InputColumns, dataManager.UserTable.Columns.IndexOf("ML_Result"));
+
+                        string mlPredictionFileName = GetCSVSaveResponse();
                         try
                         {
-                            mLAdapter.SaveModel(filename, filepath);
+                            if (!String.IsNullOrEmpty(mlPredictionFileName))
+                            {
+                                dataManager.SaveCSV(folderpath, mlPredictionFileName);
+                                Console.WriteLine("Das Speichern der Datei war erfolgreich. Die Datei liegt im Ordner programm/Datasets");
+                            }
+
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine( e.Message);
+                            repeat = GetRestartResponse(consoleKey);
+                        }
+
+                        Console.WriteLine("Drücken Sie eine beliebige Taste, um zum Hauptmenü zurückzukehren...");
+                        Console.ReadKey(true);
+
+                    }
+
+                    //Modell speichern
+                    else if (consoleKey.Key == ConsoleKey.D)
+                    {
+                        string filename = GetSaveFilenameResponse();
+                        //string filepath = GetSaveFilepathResponse();
+
+                        try
+                        {
+                            mLAdapter.SaveModel(filename);
+                            Console.WriteLine("\n\nDas Speichern des Modells war erfolgreich!");
+                            Console.WriteLine("\nDrücken Sie eine beliebige Taste, um zum Hauptmenü zurückzukehren...");
+                            Console.ReadKey(true);
                         }
                         catch (Exception e)
                         {
@@ -286,6 +362,11 @@ namespace DummyGUI_MLAdapter
                             continue;
                         }
 
+                    }
+
+                    else if (consoleKey.Key == ConsoleKey.X)
+                    {
+                        TriggerShutdown();
                     }
                     else
                     {
@@ -297,12 +378,6 @@ namespace DummyGUI_MLAdapter
             while (repeat == true);
 
             TriggerShutdown();
-        }
-
-        public static void executeOptionA()
-        {
-            
-
         }
     }
 }

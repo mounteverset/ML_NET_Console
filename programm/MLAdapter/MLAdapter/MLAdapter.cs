@@ -124,7 +124,9 @@ namespace MLAdapter
         public void LoadModel(string filepath)
         {            
             this.MLModel = this.MLContext.Model.Load(filePath: filepath, out var inputSchema);
-            
+
+            this.InputSchema = inputSchema;
+
             DefineSchemaDefinition(inputSchema);
             this.PredictionEngine = this.MLContext.Model.
                                         CreatePredictionEngine<ObjectData, ObjectPrediction>(
@@ -137,9 +139,14 @@ namespace MLAdapter
         /// </summary>
         /// <param name="filepath">Contains the full path to the specified folder without double backslashes</param>
         /// <param name="filename">Contains the specified filename including .zip</param>
-        public void SaveModel(string filepath, string filename)
+        public void SaveModel(string filename, string filepath = @"../../../../../ML_Models")
         {
-            this.MLContext.Model.Save(this.MLModel, this.TrainingData.Schema, filePath: Path.Combine(filepath, filename));
+            //filename.Concat(".mlmdl");
+            if (this.TrainingData == null)
+                this.MLContext.Model.Save(this.MLModel, this.InputSchema, Path.Combine(filepath, filename));
+            else
+                this.MLContext.Model.Save(this.MLModel, this.TrainingData.Schema, filePath: Path.Combine(filepath, filename));
+
         }
 
         /// <summary>

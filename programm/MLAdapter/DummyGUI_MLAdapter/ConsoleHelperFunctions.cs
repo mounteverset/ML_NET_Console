@@ -21,7 +21,9 @@ namespace DummyGUI_MLAdapter
             Console.WriteLine("Folgende Optionen stehen zur Verfügung:\n");
             Console.WriteLine("(A) - Eine neue CSV Tabelle mit Daten öffnen und einlesen\n");
             Console.WriteLine("(B) - Ein vorhandenes Modell öffnen\n");
+            Console.WriteLine("(X) - Das Programm beenden\n");
             Console.WriteLine("Drücken Sie A oder B um fortzufahren...\n");
+            Console.WriteLine("");
         }
 
         public static void DisplayFullHomescreen()
@@ -37,6 +39,7 @@ namespace DummyGUI_MLAdapter
             Console.WriteLine("(B) - Ein vorhandenes Modell öffnen\n");
             Console.WriteLine("(C) - Machine Learning Modell anwenden\n");
             Console.WriteLine("(D) - Machine Learning Modell speichern\n");
+            Console.WriteLine("(X) - Das Programm beenden");
             Console.WriteLine("Drücken Sie A, B, C oder D um fortzufahren...\n");
 
         }
@@ -58,7 +61,7 @@ namespace DummyGUI_MLAdapter
                 {                    
                     string stringInput = Console.ReadLine();
                     labelColumn = int.Parse(stringInput);
-                    if (labelColumn > columnCount)
+                    if (labelColumn > columnCount && labelColumn < 0)
                     {
                         Console.WriteLine("Die Label Spalte liegt außerhalb des Wertebereichs.");
                         wantToRepeat = AskForRepeat();
@@ -174,12 +177,12 @@ namespace DummyGUI_MLAdapter
         public static bool AskForRepeat ()
         {
             Console.WriteLine("Es wurde keine passende Eingabe erkannt. Möchten Sie die Eingabe wiederholen?");
-            Console.WriteLine("Drücken Sie R um zu wiederholen, A um das Programm zu beenden.");
+            Console.WriteLine("Drücken Sie Y um zu wiederholen, N um das Programm zu beenden.");
             ConsoleKeyInfo consoleKey = Console.ReadKey(true);
             
-            if (consoleKey.Key == ConsoleKey.R || consoleKey.Key == ConsoleKey.A)
+            if (consoleKey.Key == ConsoleKey.Y || consoleKey.Key == ConsoleKey.N)
             {
-                if (consoleKey.Key == ConsoleKey.R)
+                if (consoleKey.Key == ConsoleKey.Y)
                     return true;
                 else
                 {
@@ -219,13 +222,11 @@ namespace DummyGUI_MLAdapter
         }
 
         public static int DisplayCSVChoice(string [] folderContent)
-        {
-
-            // Error Handling einbauen!!!
+        {           
 
             Console.Clear();
             Console.WriteLine("************************************************");
-            Console.WriteLine("Auswahl der CSV Tabelle");
+            Console.WriteLine("Auswahl einer CSV Tabelle");
             Console.WriteLine("************************************************\n\n");
             
             for (int i = 0; i < folderContent.Length; i++)
@@ -233,7 +234,7 @@ namespace DummyGUI_MLAdapter
                 Console.WriteLine(String.Format("({0}): {1}", i+1 , folderContent[i]));
             }
 
-            Console.WriteLine("Tragen Sie die Nummer der csv - Datei ein:");
+            Console.WriteLine("\nTragen Sie die Nummer der csv - Datei ein und bestätigen Sie die Eingabe mit Enter:");
 
             int parsed_input = -1;
             bool wantToRepeat = false;
@@ -275,7 +276,8 @@ namespace DummyGUI_MLAdapter
             {
                 for (int j = 0; j < dt.Columns.Count; j++) //looping through all columns
                 {
-                    Console.Write(dt.Rows[i][j] + " "); //display of the data
+                    Console.CursorLeft = j * 4;
+                    Console.Write(String.Format("|{0}", dt.Rows[i][j])); //display of the data
                 }
                 Console.WriteLine();
             }
@@ -287,7 +289,7 @@ namespace DummyGUI_MLAdapter
         /// <param name="cutOff">Defines how many rows of the DataTable will be printed</param>
         public static void PrintDataTableToConsole(DataTable dt, int cutOff)
         {
-            Console.WriteLine("\n\nDas ist die aktuell geladene Tabelle:\n\n");
+            Console.WriteLine("\n\nDas ist ein Teil der aktuell geladenen Tabelle:\n\n");
             Console.ForegroundColor = ConsoleColor.Yellow;
             for (int i = 0; i < dt.Columns.Count; i++)
             {
@@ -321,7 +323,8 @@ namespace DummyGUI_MLAdapter
         {
             
             List<int> inputCols = new List<int>(inputColumns);
-            Console.WriteLine("\n\nDas ist die Tabelle mit den ausgewählten Spalten:");
+            Console.WriteLine("\n\nDas ist die geladene Tabelle mit den ausgewählten Spalten:");
+            Console.WriteLine("Grün = Input Spalten, Rot =  Label Spalte)");
             
             for (int i = 0; i < dt.Columns.Count; i++)
             {
@@ -361,6 +364,48 @@ namespace DummyGUI_MLAdapter
             {
                 PrintDataTableToConsole(dt);
             }
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+
+        public static void PrintDataTableToConsole(DataTable dt, int[] inputColumns, int labelColumn)
+        {
+
+            List<int> inputCols = new List<int>(inputColumns);
+            Console.WriteLine("\n\nDas ist die geladene Tabelle mit den ausgewählten Spalten:");
+            Console.WriteLine("Grün = Input Spalten, Rot =  Label Spalte)");
+
+            for (int i = 0; i < dt.Columns.Count; i++)
+            {
+                Console.CursorLeft = i * 4;
+                if (inputCols.Contains(i))
+                    Console.ForegroundColor = ConsoleColor.Green;
+                else if (i == labelColumn)
+                    Console.ForegroundColor = ConsoleColor.Red;
+                else
+                    Console.ForegroundColor = ConsoleColor.White;
+                Console.Write(String.Format("|{0}", dt.Columns[i].ColumnName));
+            }
+            Console.WriteLine();
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write(String.Concat(Enumerable.Repeat('_', dt.Columns.Count * 4)));
+            Console.WriteLine();
+
+            for (int i = 0; i < dt.Rows.Count; i++) //looping through all rows including the column up until the cutoff. change `i=1` if need to exclude the columns display
+            {
+                for (int j = 0; j < dt.Columns.Count; j++) //looping through all columns
+                {
+                    Console.CursorLeft = j * 4;
+                    if (inputCols.Contains(j))
+                        Console.ForegroundColor = ConsoleColor.Green;
+                    else if (j == labelColumn)
+                        Console.ForegroundColor = ConsoleColor.Red;
+                    else
+                        Console.ForegroundColor = ConsoleColor.White;
+                    Console.Write(String.Format("|{0}", dt.Rows[i][j]));
+                }
+                Console.WriteLine();
+            }
+            
             Console.ForegroundColor = ConsoleColor.White;
         }
 
@@ -433,6 +478,91 @@ namespace DummyGUI_MLAdapter
             string filepath = Console.ReadLine();
 
             return filepath;
+        }
+
+        public static int GetLoadModelResponse(string[] modelFolderContent)
+        {
+            Console.Clear();
+            Console.WriteLine(String.Concat(Enumerable.Repeat('*', 40)));
+            Console.WriteLine("Laden eines Machine Learning Modells");
+            Console.WriteLine(String.Concat(Enumerable.Repeat('*', 40)));
+
+            for (int i = 0; i < modelFolderContent.Length; i++)
+            {
+                Console.WriteLine(String.Format("({0}): {1}", i + 1, modelFolderContent[i]));
+            }
+
+            Console.WriteLine("\nTragen Sie die Nummer des zu ladenden Machine Learning Models ein und bestätigen Sie die Eingabe mit Enter:");
+
+            int parsed_input = -1;
+            bool wantToRepeat = false;
+            do
+            {
+                string input = Console.ReadLine();
+
+                try
+                {
+                    parsed_input = int.Parse(input);
+                    if (parsed_input > 0 && parsed_input <= modelFolderContent.Length)
+                        return parsed_input;
+                    else
+                    {
+                        Console.WriteLine("\nDie eingegebene Zahl entspricht keiner Auswahlmöglichkeit.");
+
+                        parsed_input = -1;
+
+                        wantToRepeat = AskForRepeat();
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("\nEin Fehler ist aufgetreten: " + e.Message);
+                    parsed_input = -1;
+                    wantToRepeat = AskForRepeat();
+                }
+            }
+            while (parsed_input == -1 && wantToRepeat == true);
+
+
+            return 0;
+        }
+
+        public static string GetCSVSaveResponse()
+        {
+            Console.WriteLine("\n\nMöchten Sie die Machine Learning Resultate in einer Datei speichern?");
+            Console.WriteLine("Drücken Sie Y um die Ergebnisse zu speichern, N um zum Hauptmenü zurückzukehren.");
+
+            bool answerInCorrectFormat = false;
+            bool wantToRepeat = false;
+            string response = "";
+            do
+            {
+                ConsoleKeyInfo consoleKey = Console.ReadKey(true);
+
+                if (consoleKey.Key == ConsoleKey.Y || consoleKey.Key == ConsoleKey.N)
+                {
+                    answerInCorrectFormat = true;
+                    if (consoleKey.Key == ConsoleKey.Y)
+                    {
+                        Console.WriteLine("\nBitte geben Sie einen Dateinamen an:");
+                        response = Console.ReadLine();
+                        return response;
+                    }
+                    else
+                        return response;
+                }
+                else
+                {
+                    answerInCorrectFormat = false;
+                    wantToRepeat = AskForRepeat();
+                }
+                
+            }
+            while (answerInCorrectFormat == false && wantToRepeat == true);
+
+            return "";
+            
         }
     }
 }
