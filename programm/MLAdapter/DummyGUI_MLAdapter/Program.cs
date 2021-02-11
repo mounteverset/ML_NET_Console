@@ -168,7 +168,7 @@ namespace DummyGUI_MLAdapter
                     }
                     else
                     {
-                        repeat = DisplayCharNotRecognized(consoleKey);
+                        repeat = AskForRepeat();
                         continue;
                     }
                 }
