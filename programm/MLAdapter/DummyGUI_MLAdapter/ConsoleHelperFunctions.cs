@@ -39,7 +39,7 @@ namespace DummyGUI_MLAdapter
             Console.WriteLine("(B) - Ein vorhandenes Modell öffnen\n");
             Console.WriteLine("(C) - Machine Learning Modell anwenden\n");
             Console.WriteLine("(D) - Machine Learning Modell speichern\n");
-            Console.WriteLine("(X) - Das Programm beenden");
+            Console.WriteLine("(X) - Das Programm beenden\n");
             Console.WriteLine("Drücken Sie A, B, C oder D um fortzufahren...\n");
 
         }
@@ -50,13 +50,12 @@ namespace DummyGUI_MLAdapter
             bool wantToRepeat = false;
             int labelColumn = 0;
             List<int> inputCols = new List<int>(inputColumns);
-
-            Console.WriteLine("\n\nBitte geben Sie Nummer der Spalte ein, die als Ergebniswert für das Machine Learning Modell dienen sollen.");
-            Console.WriteLine("Die Nummern starten bei 0 in der linken Spalte und werden nach rechts durchgezählt.");
-            Console.WriteLine("Bitte geben Sie die Spaltennummer ein und bestätigen mit Enter");       
-
+             
             do
             {
+                Console.WriteLine("\n\nBitte geben Sie Nummer der Spalte ein, die als Ergebniswert für das Machine Learning Modell dienen sollen.");
+                Console.WriteLine("Die Nummern starten bei 0 in der linken Spalte und werden nach rechts durchgezählt.");
+                Console.WriteLine("Bitte geben Sie die Spaltennummer ein und bestätigen mit Enter");
                 try
                 {                    
                     string stringInput = Console.ReadLine();
@@ -76,16 +75,18 @@ namespace DummyGUI_MLAdapter
                 }
                 catch (Exception e)
                 {
+                    answerInCorrectFormat = false;
                     Console.WriteLine(String.Format("Etwas ist falsch gelaufen: {0}", e));
                     wantToRepeat = AskForRepeat();
+                    continue;
                 }
             }
             while (answerInCorrectFormat == false && wantToRepeat == true);
 
             return labelColumn;
         }
-    
-        public static int[] GetInputColumnsResponse(int columnCount, ConsoleKeyInfo consoleKey)
+        
+        public static int[] GetInputColumnsResponse(int columnCount, ConsoleKeyInfo consoleKey, bool usedForPrediction)
         {
             bool answerInCorrectFormat = false;
             bool wantToRepeat = false;
@@ -94,19 +95,40 @@ namespace DummyGUI_MLAdapter
             Console.WriteLine("Die Nummern starten bei 0 in der linken Spalte und werden nach rechts durchgezählt.");
             Console.WriteLine("Bitte trennen Sie die Spaltennummern mit einem Komma");
             Console.WriteLine("Beispiel: 0,1,3,4,5,7");
-            Console.WriteLine("\nHinweis: Drücken Sie A, um alle Spalten außer die letzte Spalte als Eingabespalten festzulegen.");
+
+            if (usedForPrediction == true)
+                Console.WriteLine("\nHinweis: Drücken Sie A, um alle Spalten als Eingabespalten festzulegen.");
+            else
+            {
+                Console.Write("\nHinweis: Drücken Sie A, um alle Spalten ");
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.Write("AUSSER ");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write("die letzte Spalte als Eingabespalten festzulegen.\n");
+            }
+                
             do
             {
-
                 string stringInput = Console.ReadLine();
                 try
                 {                   
                     if (stringInput.Contains('A') || stringInput.Contains('a'))
                     {
-                        for (int i = 0; i < columnCount-1; i++)
+                        if (usedForPrediction == true)
                         {
-                            inputColumns.Add(i);
+                            for (int i = 0; i < columnCount; i++)
+                            {
+                                inputColumns.Add(i);
+                            }
                         }
+                        else
+                        {
+                            for (int i = 0; i < columnCount - 1; i++)
+                            {
+                                inputColumns.Add(i);
+                            }
+                        }
+                        
                     }
                     else
                     {
@@ -221,13 +243,24 @@ namespace DummyGUI_MLAdapter
 
         }
 
-        public static int DisplayCSVChoice(string [] folderContent)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="folderContent"></param>
+        /// <param name="methodPurpose">0 = Training CSV, 1 = Test CSV, 2 = Prediction CSV</param>
+        /// <returns></returns>
+        public static int DisplayCSVChoice(string [] folderContent, int methodPurpose)
         {           
 
             Console.Clear();
-            Console.WriteLine("************************************************");
-            Console.WriteLine("Auswahl einer CSV Tabelle");
-            Console.WriteLine("************************************************\n\n");
+            Console.WriteLine("*************************************************************");
+            if (methodPurpose == 0)
+                Console.WriteLine("Auswahl einer CSV Tabelle mit Trainingsdaten");
+            else if (methodPurpose == 1)
+                Console.WriteLine("Auswahl einer CSV Tabelle mit Testdaten");
+            else if (methodPurpose == 2)
+                Console.WriteLine("Auswahl einer CSV Tabelle zur Vorhersage mit einem ML Modell");
+            Console.WriteLine("*************************************************************\n\n");
             
             for (int i = 0; i < folderContent.Length; i++)
             {
@@ -324,7 +357,7 @@ namespace DummyGUI_MLAdapter
             
             List<int> inputCols = new List<int>(inputColumns);
             Console.WriteLine("\n\nDas ist die geladene Tabelle mit den ausgewählten Spalten:");
-            Console.WriteLine("Grün = Input Spalten, Rot =  Label Spalte)");
+            Console.WriteLine("(Grün = Input Spalten, Rot =  Label Spalte)\n\n");
             
             for (int i = 0; i < dt.Columns.Count; i++)
             {
@@ -372,7 +405,7 @@ namespace DummyGUI_MLAdapter
 
             List<int> inputCols = new List<int>(inputColumns);
             Console.WriteLine("\n\nDas ist die geladene Tabelle mit den ausgewählten Spalten:");
-            Console.WriteLine("Grün = Input Spalten, Rot =  Label Spalte)");
+            Console.WriteLine("(Grün = Input Spalten, Rot =  Label Spalte)\n\n");
 
             for (int i = 0; i < dt.Columns.Count; i++)
             {
@@ -443,7 +476,7 @@ namespace DummyGUI_MLAdapter
 
             Console.WriteLine("Das Trainieren des Machine Learning Modells ist abgeschlossen.");
             Console.WriteLine(String.Format("Das Model hat mit den ausgewählten Testdaten mit einer Genauigkeit von {0}%", HelperFunctions.GetModelAccuracy(dm.UserTable, testResults, dm.LabelColumn) * 100 ));
-            Console.WriteLine("Drücken Sie eine beliebige Taste um fortzufahren...");
+            Console.WriteLine("Drücken Sie eine beliebige Taste, um zum Hauptmenü zurückzukehren...");
             Console.ReadKey(true);
         }
 

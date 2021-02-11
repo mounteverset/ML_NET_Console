@@ -26,7 +26,6 @@ namespace DummyGUI_MLAdapter
             bool modelLoaded = false;
             string folderpath = @"../../../../../Datasets";
             string modelpath = @"../../../../../ML_Models";
-            
 
             do
             {
@@ -41,7 +40,7 @@ namespace DummyGUI_MLAdapter
                     if (consoleKey.Key == ConsoleKey.A)
                     {
 
-                        int resultCSV = DisplayCSVChoice(folderContent);
+                        int resultCSV = DisplayCSVChoice(folderContent, 0);
                         bool hasHeader = GetHeaderResponse(consoleKey);
                         try
                         {
@@ -64,7 +63,7 @@ namespace DummyGUI_MLAdapter
 
                         // Input Spalten auswählen
 
-                        dataManager.SetInputColumns(GetInputColumnsResponse(dataManager.UserTable.Columns.Count, consoleKey));
+                        dataManager.SetInputColumns(GetInputColumnsResponse(dataManager.UserTable.Columns.Count, consoleKey, false));
 
                         // Label Spalte auswählen
 
@@ -94,7 +93,7 @@ namespace DummyGUI_MLAdapter
                             Console.WriteLine(e.Message);
                         }
 
-                        int testCSV = DisplayCSVChoice(folderContent);
+                        int testCSV = DisplayCSVChoice(folderContent, 1);
 
                         try
                         {
@@ -183,7 +182,7 @@ namespace DummyGUI_MLAdapter
                     if (consoleKey.Key == ConsoleKey.A)
                     {
 
-                        int resultCSV = DisplayCSVChoice(folderContent);
+                        int resultCSV = DisplayCSVChoice(folderContent, 0);
                         bool hasHeader = GetHeaderResponse(consoleKey);
                         try
                         {
@@ -206,7 +205,7 @@ namespace DummyGUI_MLAdapter
 
                         // Input Spalten auswählen
 
-                        dataManager.SetInputColumns(GetInputColumnsResponse(dataManager.UserTable.Columns.Count, consoleKey));
+                        dataManager.SetInputColumns(GetInputColumnsResponse(dataManager.UserTable.Columns.Count, consoleKey, false));
 
                         // Label Spalte auswählen
 
@@ -225,18 +224,19 @@ namespace DummyGUI_MLAdapter
                         }
                         try
                         {
+                            Console.WriteLine("Das Machine Learning Modell wird nun anhand der Eingabedaten trainiert.");
+                            Console.WriteLine("Dies dauert einen kurzen Augenblick");
                             mLAdapter.TrainModel(dataManager);
-                            Console.WriteLine("\nDas Trainieren des Modells war erfolgreich.");
+                            Console.WriteLine("\nDas Trainieren des Modells war erfolgreich.\n");
                             Console.WriteLine("\nDrücken Sie eine beliebige Taste um mit dem Testen des Modells fortzufahren...");
                             Console.ReadKey(true);
-
                         }
                         catch (Exception e)
                         {
                             Console.WriteLine(e.Message);
                         }
 
-                        int testCSV = DisplayCSVChoice(folderContent);
+                        int testCSV = DisplayCSVChoice(folderContent, 1);
 
                         try
                         {
@@ -288,7 +288,7 @@ namespace DummyGUI_MLAdapter
                     //Modell anwenden
                     else if (consoleKey.Key == ConsoleKey.C)
                     {
-                        int resultCSV = DisplayCSVChoice(folderContent);
+                        int resultCSV = DisplayCSVChoice(folderContent, 2);
                         bool hasHeader = GetHeaderResponse(consoleKey);
                         try
                         {
@@ -311,10 +311,8 @@ namespace DummyGUI_MLAdapter
                         if (dataManager.InputColumns == null)
                         {
                             PrintDataTableToConsole(dataManager.UserTable, 5);
-                            dataManager.SetInputColumns(GetInputColumnsResponse(dataManager.UserTable.Columns.Count, consoleKey));
+                            dataManager.SetInputColumns(GetInputColumnsResponse(dataManager.UserTable.Columns.Count, consoleKey, true));
                         }
-
-
 
                         dataManager.SetMLResult(mLAdapter.PredictAndReturnResults(dataManager));
 

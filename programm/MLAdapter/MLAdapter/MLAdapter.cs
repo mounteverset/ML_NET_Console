@@ -162,11 +162,20 @@ namespace MLAdapter
             List<int> results = new List<int>();
             
             //for Schleife für alle Rows in rawData und dann das Ergebnis in eine Liste schreiben
-            foreach (ObjectData row in data)
+            try
             {
-                var singlePrediction = this.PredictionEngine.Predict(row);
-                
-                results.Add((int)singlePrediction.Label-1);
+                foreach (ObjectData row in data)
+                {
+                    var singlePrediction = this.PredictionEngine.Predict(row);
+
+                    results.Add((int)singlePrediction.Label - 1);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Ein Fehler bei der Vorhersage der Werte ist aufgetreten:");
+                Console.WriteLine(e.Message);
+                Console.WriteLine("Der häufigste Fehler ist die falsche Angabe der Input Spalten.");               
             }
 
             return results;
@@ -201,16 +210,23 @@ namespace MLAdapter
         private static List<ObjectData> CreateObjectDataList(DataTable dt, int[] inputColumns)
         {
             List<ObjectData> objectDataList = new List<ObjectData>();
-
-            for (int i = 0; i < dt.Rows.Count; i++)
+            try
             {
-                float[] floatFeatures = new float[inputColumns.Length];
-                for (int j = 0; j < inputColumns.Length; j++)
+                for (int i = 0; i < dt.Rows.Count; i++)
                 {
-                    floatFeatures[j] = Convert.ToSingle(dt.Rows[i][inputColumns[j]]);
+                    float[] floatFeatures = new float[inputColumns.Length];
+                    for (int j = 0; j < inputColumns.Length; j++)
+                    {
+                        floatFeatures[j] = Convert.ToSingle(dt.Rows[i][inputColumns[j]]);
+                    }
+                    objectDataList.Add(new ObjectData(floatFeatures));
                 }
-                objectDataList.Add(new ObjectData(floatFeatures));
             }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            
             return objectDataList;
         }
 
