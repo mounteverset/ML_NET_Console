@@ -163,7 +163,7 @@ namespace DataManager
             //filepath = $@"C:\Users\casa2\OneDrive\Dokumente\II_third_semester\programmierprojekt\neuronale_netzwerke\programm\DataManager\{FileName(filename)}.CSV";
             string saveFilePath = Path.Combine(filepath, String.Concat(filename, ".csv"));
             //Eine leere CSV-Datei wird erstellt
-            using (StreamWriter sw = new StreamWriter(filepath, false, System.Text.Encoding.Default))//JJJJ
+            using (StreamWriter sw = new StreamWriter(saveFilePath, false, System.Text.Encoding.Default))//JJJJ
             {
                 int numberOfColumns = _UserTable.Columns.Count;
                 //Die Kolonnen werden in der CSV-Datei gespeichert
